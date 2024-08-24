@@ -19,12 +19,12 @@ app.get("/",(req,res)=>{
 // Routes
 app.use("/api/auth",require("./routes/authRoute"));
 app.use("/api/user",require("./routes/userRoute"));
-
+app.use("/api/company",require("./routes/companyRoute"));
 
 // Start the server
- const PORT = process.env.PORT || 3000;
- app.listen(PORT, ()=>{
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, ()=>{
     console.log(`Server is running on port ${PORT}`);
- });
+});
 
  

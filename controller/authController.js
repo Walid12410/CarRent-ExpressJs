@@ -25,7 +25,6 @@ module.exports.registerUserController = asyncHandler(async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-
     user = new User({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -36,7 +35,6 @@ module.exports.registerUserController = asyncHandler(async (req, res) => {
 
     // save user to database
     user.save();
-
 
     // send a success message 
     res.status(201).json({ message: "you registered successfully, please login" });
