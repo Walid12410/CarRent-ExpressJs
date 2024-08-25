@@ -46,7 +46,15 @@ const CompaniesSchema = new mongoose.Schema({
         maxLength: 100,
     },
 },{
-    timestamps: true
+    timestamps: true,
+    toJSON : {virtuals : true},
+    toObject : {virtuals : true}
+});
+
+CompaniesSchema.virtual("imageCompany",{
+    ref: "CompanyImage",
+    foreignField : "companyID",
+    localField : "_id"
 });
 
 // Companies Modal

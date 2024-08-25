@@ -2,8 +2,9 @@ const asyncHandler = require("express-async-handler");
 const { Companies,
     validationCompainesCreate,
     validationComapainesUpdate
-} = require("../model/Companies");
-
+} = require("../model/Company");
+const { CompanyImage } = require("../model/CompanyImage");
+const { cloudinaryRemoveImage } = require("../utils/cloudinary");
 
 /**
  * @desc Create new company
@@ -44,7 +45,7 @@ module.exports.ceateNewCompanyController = asyncHandler(async (req, res) => {
  * @access Public
 */
 module.exports.getAllCompaniesController = asyncHandler(async (req, res) => {
-    const companies = await Companies.find();
+    const companies = await Companies.find().populate("imageCompany");
     res.status(200).json(companies);
 });
 
@@ -71,22 +72,22 @@ module.exports.getOneCompanyController = asyncHandler(async (req, res) => {
  * @method PUT
  * @access private (Admin Only)
 */
-module.exports.updateCompanyController = asyncHandler(async(req,res)=>{
-    const {error} = validationComapainesUpdate(req.body);
-    if(error){
-        return res.status(400).json({message : error.details[0].message});
+module.exports.updateCompanyController = asyncHandler(async (req, res) => {
+    const { error } = validationComapainesUpdate(req.body);
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
     }
 
-    const updateCompany = await Companies.findByIdAndUpdate(req.params.id,{
+    const updateCompany = await Companies.findByIdAndUpdate(req.params.id, {
         $set: {
             companyName: req.body.companyName,
             companyEmail: req.body.companyEmail,
             CompanyPhoneNumber: req.body.CompanyPhoneNumber,
             CompanyAddress: req.body.CompanyAddress,
             CompanyCity: req.body.CompanyCity,
-            CompanyState: req.body.CompanyState    
+            CompanyState: req.body.CompanyState
         }
-    },{new : true});
+    }, { new: true });
 
     res.status(200).json(updateCompany);
 });
@@ -97,9 +98,9 @@ module.exports.updateCompanyController = asyncHandler(async(req,res)=>{
  * @method GET
  * @access private(only Admin)
 */
-module.exports.CountAllCompaniesController = asyncHandler(async(req,res)=>{
+module.exports.CountAllCompaniesController = asyncHandler(async (req, res) => {
     const countCompanies = await Companies.countDocuments();
-    res.status(200).json({Count : countCompanies});
+    res.status(200).json({ Count: countCompanies });
 });
 
 /**
@@ -108,16 +109,24 @@ module.exports.CountAllCompaniesController = asyncHandler(async(req,res)=>{
  * @method DELETE
  * @access private (Admin Only)
 */
-module.exports.deleteCompanyController = asyncHandler(async(req,res)=>{
-    const comapanyFound = await Companies.findById(req.params.id);
-    if(!comapanyFound){
-        res.status(404).json({message : "Company not found"});
+module.exports.deleteCompanyController = asyncHandler(async (req, res) => {
+    const companyFound = await Companies.findById(req.params.id);
+    if (!companyFound) {
+        return res.status(404).json({ message: "Company not found" });
+    }
+    if (!req.user.isAdmin) {
+        return res.status(403).json({ message: "Access denied, forbidden" });
+    }
+    const companyImages = await CompanyImage.find({ companyID: req.params.id });
+
+    for (const image of companyImages) {
+        if (image.image.cloudinary_id) {
+            await cloudinaryRemoveImage(image.image.cloudinary_id);
+        }
+
+        await CompanyImage.findByIdAndDelete(image._id);
     }
 
-    if(req.user.isAdmin){
-        await Companies.findByIdAndDelete(req.params.id);
-        res.status(200).json({message : "Company has been deleted successfully"});
-    }else{
-        res.status(403).json({message : "access denied, forbidden"});
-    }
+    await Companies.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Company and its images have been deleted successfully" });
 });
