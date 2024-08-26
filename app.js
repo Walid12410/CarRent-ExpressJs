@@ -20,6 +20,7 @@ app.get("/",(req,res)=>{
 app.use("/api/auth",require("./routes/authRoute"));
 app.use("/api/user",require("./routes/userRoute"));
 app.use("/api/company",require("./routes/companyRoute"));
+app.use("/api/auth-employee",require("./routes/authEmployeeRoute"));
 
 // Start the server
 const PORT = process.env.PORT || 3000;
