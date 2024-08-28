@@ -78,6 +78,7 @@ module.exports.loginEmployeeUserController = asyncHandler(async(req,res)=>{
     res.status(200).json({
         _id : employeeUser._id,
         userName : employeeUser.userName,
+        comapnyID : employeeUser.companyID,
         token
     });
 });

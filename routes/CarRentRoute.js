@@ -10,6 +10,9 @@ const verifyEmployeeToken = require("../middlewares/EmployeeToken");
 const validationObjectId = require("../middlewares/validateObjectID");
 const photoUpload = require("../middlewares/uploadProfilePhoto");
 
+// api/car-rent/count
+router.route("/count")
+      .get(countAllCarRentController);
 
 // api/car-rent
 router.route("/") 
@@ -21,10 +24,6 @@ router.route("/:id")
       .get(validationObjectId, getOneCarRentController)
       .put(validationObjectId,verifyEmployeeToken , updateOneCarRentController)
       .delete(validationObjectId, verifyEmployeeToken , deleteCarRentController);
-
-// api/car-rent/count
-router.route("/count")
-      .get(countAllCarRentController);
 
 
 
