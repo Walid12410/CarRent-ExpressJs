@@ -88,6 +88,11 @@ const CarRentSchema = new mongoose.Schema({
         trim : true,
         minLength : 1,
         maxLength : 20
+    },
+    categoryId: {
+        type:  mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+        required: false
     }
 }, { timestamps: true });
 
@@ -110,7 +115,8 @@ function validationCreateCarRent(obj){
         mileage:  Joi.string().trim().min(2).max(100).required(),
         fuelType :  Joi.string().trim().min(2).max(100).required(),
         transmission :Joi.string().trim().min(2).max(100).required(),
-        rentPrice : Joi.string().trim().min(1).max(20).required()
+        rentPrice : Joi.string().trim().min(1).max(20).required(),
+        categoryId: Joi.required(),
     });
     return schema.validate(obj);
 }
@@ -129,7 +135,8 @@ function validationUpdateCarRent(obj){
         mileage:  Joi.string().trim().min(2).max(100),
         fuelType :  Joi.string().trim().min(2).max(100),
         transmission :Joi.string().trim().min(2).max(100),
-        rentPrice : Joi.string().trim().min(1).max(20)
+        rentPrice : Joi.string().trim().min(1).max(20),
+        categoryId: Joi.string().hex().required()
     });
     return schema.validate(obj);
 }

@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 
 app.get("/",(req,res)=>{
-    res.send("Welcome to Car Market!!");
+    res.send("Welcome to Car Rent Market!");
 });
 
 // Routes
@@ -21,7 +21,8 @@ app.use("/api/auth",require("./routes/authRoute"));
 app.use("/api/user",require("./routes/userRoute"));
 app.use("/api/company",require("./routes/companyRoute"));
 app.use("/api/auth-employee",require("./routes/authEmployeeRoute"));
-app.use("/api/car-rent" , require("./routes/CarRentRoute"));
+app.use("/api/car-rent", require("./routes/CarRentRoute"));
+app.use("/api/category", require("./routes/CategoryRoute"));
 
 // Start the server
 const PORT = process.env.PORT || 3000;

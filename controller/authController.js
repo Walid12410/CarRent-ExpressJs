@@ -8,8 +8,7 @@ const { User, validationRegisterUser, validationLoginUser } = require("../model/
  * @Route /api/auth/register
  * @method POST
  * @access Public
- */
-
+*/
 module.exports.registerUserController = asyncHandler(async (req, res) => {
     const { error } = validationRegisterUser(req.body);
     if (error) {
@@ -38,7 +37,6 @@ module.exports.registerUserController = asyncHandler(async (req, res) => {
 
     // send a success message 
     res.status(201).json({ message: "you registered successfully, please login" });
-
 });
 
 /**
@@ -47,7 +45,6 @@ module.exports.registerUserController = asyncHandler(async (req, res) => {
  * @method POST
  * @access Public
  */
-
 module.exports.loginUserController = asyncHandler(async (req, res) => {
     const {error} = validationLoginUser(req.body);
     if(error){
@@ -78,5 +75,4 @@ module.exports.loginUserController = asyncHandler(async (req, res) => {
     isAdmin : user.isAdmin,
     token
    });
-
 });

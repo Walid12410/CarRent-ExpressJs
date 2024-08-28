@@ -89,6 +89,10 @@ module.exports.updateCompanyController = asyncHandler(async (req, res) => {
         }
     }, { new: true });
 
+    if(!updateCompany){
+        return res.status(404).json({message : "Company not found"});
+    }
+
     res.status(200).json(updateCompany);
 });
 
