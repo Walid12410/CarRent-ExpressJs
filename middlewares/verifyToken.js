@@ -6,7 +6,7 @@ function verfiyToken(req,res,next){
     if(authToken){
         const token = authToken.split(" ")[1];
         try {
-            const decodedPayLoad = jwt.verify(token , process.env.JWT_SECRET );
+               const decodedPayLoad = jwt.verify(token , process.env.JWT_SECRET );
             req.user = decodedPayLoad;
             next();
         } catch (error) {

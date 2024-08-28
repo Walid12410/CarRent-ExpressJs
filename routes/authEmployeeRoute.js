@@ -1,5 +1,6 @@
 const router = require("express").Router();
-const { registerEmployeeUserController, loginEmployeeUserController } = require("../controller/authEmployee");
+const {registerEmployeeUserController,
+loginEmployeeUserController } = require("../controller/authEmployeeController");
 const { verifyTokenAndAdmin } = require("../middlewares/verifyToken");
 
 
