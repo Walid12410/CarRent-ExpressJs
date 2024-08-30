@@ -13,8 +13,7 @@ const mongoose = require("mongoose");
  * @Route /api/auth-employee/register
  * @method POST
  * @access private(only Admin)
- */
-
+*/
 module.exports.registerEmployeeUserController = asyncHandler(async(req,res)=>{
     const {error} = validationRegisterEmployeeUser(req.body);
     if(error) {
