@@ -7,7 +7,7 @@ const { Companies } = require("../model/Company");
 const mongoose = require("mongoose");
 const { Category } = require("../model/Category");
 const CarImage = require("../model/CarRentImage");
-const { cloudinaryUploadImage } = require("../utils/cloudinary");
+const { cloudinaryUploadImage,cloudinaryRemoveImage } = require("../utils/cloudinary");
 const path = require("path");
 const fs = require("fs");
 
@@ -141,7 +141,7 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
 
         cars = await CarRent.find({ categoryId: category })
             .sort({ createdAt: -1 })
-            .populate("category");
+            .populate("category").populate("CarImage");
     } else if (company) {
         if (!company || !mongoose.Types.ObjectId.isValid(company)) {
             return res.status(400).json({ message: "Invalid Object ID" });
@@ -149,7 +149,7 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
 
         cars = await CarRent.find({ companyId: company })
             .sort({ createdAt: -1 })
-            .populate("category");
+            .populate("category").populate("CarImage");
     } else {
         cars = await CarRent.find().sort({ createdAt: -1 })
             .populate("category").populate("CarImage");
@@ -168,7 +168,7 @@ module.exports.getOneCarRentController = asyncHandler(async (req, res) => {
     const car = await CarRent.findById(req.params.id).populate({
         path: "companyDetails",
         populate: { path: "imageCompany", match: { isDefaultImage: true } }
-    });
+    }).populate("CarImage");
     if (car) {
         res.status(200).json(car);
     } else {
@@ -238,11 +238,23 @@ module.exports.deleteCarRentController = asyncHandler(async (req, res) => {
         return res.status(404).json({ message: "Car not found" });
     }
 
-    // @TODO Delete Car Rent Image
+    const images = await CarImage.find({ carRentID: req.params.id });
+
+    for (const image of images) {
+        try {
+            await cloudinaryRemoveImage(image.carImage.cloudinary_id);
+        } catch (err) {
+            console.error(`Failed to delete image with Cloudinary ID ${image.carImage.cloudinary_id}:`, err.message);
+        }
+    }
+
+    await CarImage.deleteMany({ carRentID: req.params.id });
 
     await CarRent.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Car rent and its images has been deleted successfully" });
+
+    res.status(200).json({ message: "Car rent and its images have been deleted successfully" });
 });
+
 
 /**
  * @desc Count how many carRent
