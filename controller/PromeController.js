@@ -5,6 +5,7 @@ const { Promo,
 }  = require("../model/Prome");
 const { Companies } = require("../model/Company");
 const mongoose = require("mongoose");
+const { GetPromo }  = require("../model/GetPromo");
 
 /**
  * @desc Create new Promo
@@ -125,4 +126,49 @@ module.exports.deleteOnePromoController = asyncHandler(async(req,res)=>{
         await Promo.findByIdAndDelete(req.params.id);
         res.status(200).json({message : "Promo has been succefully deleted"});
     }
+});
+
+
+/**
+ * @desc Get Promo Code
+ * @Route /api/promo/claim
+ * @method POST
+ * @access private (only user)
+*/
+module.exports.getPromoCodeController = asyncHandler(async(req,res)=>{
+
+    const { promoId, userId, claimAt } = req.body;
+
+    if (!mongoose.isValidObjectId(promoId)) {
+        return res.status(400).json({ message: "Invalid promotion ID" });
+    }
+    if (!mongoose.isValidObjectId(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    const promo = await Promo.findById(promoId);
+    if (!promo) {
+        return res.status(404).json({ message: "Promotion not found" });
+    }
+
+    if (promo.status !== "Active" || claimAt < promo.startDate || claimAt > promo.endDate) {
+        return res.status(400).json({ message: "Promotion is not active or has expired" });
+    }
+
+    const existingClaim = await GetPromo.findOne({userId: userId, promoId:  promoId });
+    if (existingClaim) {
+        return res.status(400).json({ message: "You have already claimed this promotion" });
+    }
+
+    const newClaim = new GetPromo({
+        userId,
+        promoId: promo._id,
+        claimedAt: claimAt,
+        startDate: promo.startDate,
+        endDate: promo.endDate
+    });
+
+    await newClaim.save();
+
+    res.status(201).json({ message: "Promotion claimed successfully" });
 });
