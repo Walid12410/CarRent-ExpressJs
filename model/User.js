@@ -5,26 +5,19 @@ const jwt = require("jsonwebtoken");
 // User Schema
 const UserSchema = new mongoose.Schema({
     firstName: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 2,
+        type: String, required: true,
+        trim: true, minLength: 2,
         maxLength: 100
     },
     lastName: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 2,
+        type: String, required: true,
+        trim: true, minLength: 2,
         maxLength: 100
     },
     email: {
-        type: String,
-        required: true,
-        unique: true,
-        minLength: 5,
-        maxLength: 100,
-        trim: true
+        type: String, required: true,
+        unique: true, minLength: 5,
+        maxLength: 100,trim: true
     },
     profilePhoto: {
         type: Object,
@@ -34,21 +27,16 @@ const UserSchema = new mongoose.Schema({
         }
     },
     phoneNumber: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 6,
+        type: String, required: true,
+        trim: true, minLength: 6,
         maxLength: 20
     },
     password: {
-        type: String,
-        required: true,
-        minLength: 8,
-        maxLength: 100,
+        type: String, required: true,
+        minLength: 8, maxLength: 100,
     },
     isAdmin: {
-        type: Boolean,
-        default: false
+        type: Boolean, default: false
     },
 }, {
     timestamps: true

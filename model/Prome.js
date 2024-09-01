@@ -35,6 +35,18 @@ const promoSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Companies",
         required: true
+    },
+    promoTitle : {
+        type: String,
+        required : true,
+        minLength : 2,
+        maxLength : 100,
+        trim: true
+    },
+    promoDescription : {
+        type: String, required : true,
+        minLength : 2 ,
+        trim : true
     }
 }, {
     timestamps: true,
@@ -64,7 +76,9 @@ function validationCreatePromo(obj) {
         endDate: Joi.date().iso().greater(Joi.ref('startDate')).required(),
         usageLimit: Joi.number().integer().min(1),
         usedCount: Joi.number().integer().min(0),
-        companyID: Joi.string().required()
+        companyID: Joi.string().required(),
+        promoTitle : Joi.string().trim().min(2).max(100).required(),
+        promoDescription : Joi.string().trim().min(2).required()
     });
     return schema.validate(obj);
 }
@@ -81,6 +95,8 @@ function validationUpdatePromo(obj) {
         usageLimit: Joi.number().integer().min(1),
         usedCount: Joi.number().integer().min(0),
         status: Joi.string().valid('Active', 'Expired', 'Inactive'),
+        promoTitle : Joi.string().trim().min(2).max(100),
+        promoDescription : Joi.string().trim().min(2)
     });
     return schema.validate(obj);
 }

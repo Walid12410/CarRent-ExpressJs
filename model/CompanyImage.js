@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Joi = require("joi");
+
 
 // CompanyImage Schema
 const CompanyImageSchema = new mongoose.Schema({

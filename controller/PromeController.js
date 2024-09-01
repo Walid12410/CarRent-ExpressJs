@@ -44,7 +44,9 @@ module.exports.createNewPromoController = asyncHandler(async (req, res) => {
         endDate: req.body.endDate,
         usageLimit: req.body.usageLimit,
         usedCount: req.body.usedCount,
-        companyID: req.body.companyID
+        companyID: req.body.companyID,
+        promoTitle : req.body.promoTitle,
+        promoDescription : req.body.promoDescription
     });
 
     promoCheck.save();
@@ -108,6 +110,8 @@ module.exports.updatePromoCodeController = asyncHandler(async (req, res) => {
             endDate: req.body.endDate,
             usageLimit: req.body.usageLimit,
             usedCount: req.body.usedCount,
+            promoTitle : req.body.promoTitle,
+            promoDescription : req.body.promoDescription
         }
     }, { new: true });
 

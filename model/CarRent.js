@@ -4,42 +4,31 @@ const Joi = require("joi");
 // Car Schema
 const CarRentSchema = new mongoose.Schema({
     carMake: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 2,
+        type: String, required: true,
+        trim: true, minLength: 2,
         maxLength: 100
     },
     carModel: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 2,
+        type: String, required: true,
+        trim: true, minLength: 2,
         maxLength: 100
     },
     year: {
-        type: String,
-        required: true,
+        type: String, required: true,
     },
     color: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 2,
+        type: String, required: true,
+        trim: true, minLength: 2,
         maxLength: 100
     },
     carType: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 2,
+        type: String, required: true,
+        trim: true, minLength: 2,
         maxLength: 100
     },
     carStatus: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 2,
+        type: String, required: true,
+        trim: true, minLength: 2,
         maxLength: 100
     },
     companyId: {
@@ -48,45 +37,32 @@ const CarRentSchema = new mongoose.Schema({
         required: true
     },
     licensePlate: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 1,
+        type: String, required: true,
+        trim: true, minLength: 1,
         maxLength: 100
     },
     vin: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 2,
+        type: String, required: true,
+        trim: true, minLength: 2,
         maxLength: 100
     },
     mileage: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 2,
+        type: String, required: true,
+        trim: true, minLength: 2,
         maxLength: 100
     },
     fuelType: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 2,
-        maxLength: 100
+        type: String, required: true, trim: true,
+        minLength: 2, maxLength: 100
     },
     transmission: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 2,
+        type: String, required: true,
+        trim: true, minLength: 2,
         maxLength: 100
     },
     rentPrice: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 1,
+        type: String, required: true,
+        trim: true, minLength: 1,
         maxLength: 20
     },
     categoryId: {
