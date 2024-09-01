@@ -27,7 +27,17 @@ const getPromoSchema = new mongoose.Schema({
         type: Date,
         required: true
     }
+},{timestamps : true,
+    toJSON : {virtuals : true},
+    toObject : {virtuals: true}
 });
+
+getPromoSchema.virtual("promoDetails",{
+    ref: "Promo",
+    localField : "promoId",
+    foreignField : "_id"
+});
+
 
 const GetPromo = mongoose.model('GetPromo', getPromoSchema);
 

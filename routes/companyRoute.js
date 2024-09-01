@@ -13,25 +13,25 @@ const photoUpload = require("../middlewares/uploadProfilePhoto");
 
 // api/company/list
 router.route("/list")
-      .get(getAllCompaniesController)
-      .post(verifyTokenAndAdmin , ceateNewCompanyController);
+.get(getAllCompaniesController)
+.post(verifyTokenAndAdmin , ceateNewCompanyController);
  
 // api/company/list/:id
 router.route("/list/:id")
-      .get(validationObjectId, getOneCompanyController)
-      .put(validationObjectId,verifyTokenAndAdmin,updateCompanyController)
-      .delete(validationObjectId,verifyTokenAndAdmin , deleteCompanyController)
+.get(validationObjectId, getOneCompanyController)
+.put(validationObjectId,verifyTokenAndAdmin,updateCompanyController)
+.delete(validationObjectId,verifyTokenAndAdmin , deleteCompanyController)
 
 // api/company/upload-company-image
 router.route("/upload-company-image/:id")
-      .post(verifyTokenAndAdmin,validationObjectId,photoUpload.single("image"), AddCompanyImageController);
+.post(verifyTokenAndAdmin,validationObjectId,photoUpload.single("image"), AddCompanyImageController);
 
 // api/company/Remove-company-image/:id
 router.route("/remove-company-image/:id")
-      .delete(verifyTokenAndAdmin, validationObjectId , RemovImageCompanyController);         
+.delete(verifyTokenAndAdmin, validationObjectId , RemovImageCompanyController);         
 
 // api/company/count
 router.route("/count")
-      .get(verifyTokenAndAdmin,CountAllCompaniesController);
+.get(verifyTokenAndAdmin,CountAllCompaniesController);
 
 module.exports = router;

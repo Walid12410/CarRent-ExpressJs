@@ -6,8 +6,8 @@ const Joi = require("joi");
 const promoSchema = new mongoose.Schema({
     promoCode: {
         type: String, unique: true,
-        required: true, minLength : 2,
-        maxLength : 10
+        required: true, minLength: 2,
+        maxLength: 10
     },
     discountAmount: {
         type: Number, default: 0
@@ -31,12 +31,23 @@ const promoSchema = new mongoose.Schema({
         type: String, enum: ['Active', 'Expired', 'Inactive'],
         default: 'Active'
     },
-    companyID : {
-        type : mongoose.Schema.Types.ObjectId,
+    companyID: {
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Companies",
-        required : true
+        required: true
     }
-},{timestamps : true});
+}, {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+});
+
+
+promoSchema.virtual("comapanyDetails", {
+    ref: "Companies",
+    foreignField: "_id",
+    localField: "companyID"
+});
 
 
 // Create the Promo model using the schema

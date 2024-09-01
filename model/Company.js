@@ -4,45 +4,33 @@ const Joi = require("joi");
 // Companies Schema
 const CompaniesSchema = new mongoose.Schema({
     companyName:{
-        type: String,
-        required : true,
-        trim : true,
-        minLength: 2,
+        type: String,required : true,
+        trim : true, minLength: 2,
         maxLength : 100
     },
     companyEmail: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength : 5,
+        type: String, required: true,
+        trim: true, minLength : 5,
         maxLength: 100,
     },
     CompanyPhoneNumber: {
-        type: String,
-        required : true,
-        trim: true,
-        minLength :6 ,
+        type: String,  required : true,
+        trim: true,  minLength :6 ,
         maxLength : 20
     },
     CompanyAddress : {
-        type: String,
-        required: true,
-        trim: true,
-        minLength : 2,
+        type: String, required: true,
+        trim: true, minLength : 2,
         maxLength: 100,
     },
     CompanyCity: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength : 2,
+        type: String, required: true,
+        trim: true, minLength : 2,
         maxLength: 100,
     },
     CompanyState: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength : 2,
+        type: String, required: true,
+        trim: true, minLength : 2,
         maxLength: 100,
     },
 },{
