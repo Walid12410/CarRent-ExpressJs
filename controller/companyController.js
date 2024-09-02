@@ -32,7 +32,7 @@ module.exports.ceateNewCompanyController = asyncHandler(async (req, res) => {
         CompanyState: req.body.CompanyState
     });
 
-    company.save();
+    await company.save();
 
     res.status(201).json({ message: "New company added successfully" });
 });

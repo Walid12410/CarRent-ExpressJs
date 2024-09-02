@@ -59,7 +59,7 @@ module.exports.createCarRentController = asyncHandler(async (req, res) => {
         categoryId: req.body.categoryId
     });
 
-    CarRentCreate.save();
+    await CarRentCreate.save();
 
     res.status(201).json({ message: "New car rent has been created succesfully" });
 });

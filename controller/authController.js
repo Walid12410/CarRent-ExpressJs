@@ -33,7 +33,7 @@ module.exports.registerUserController = asyncHandler(async (req, res) => {
     });
 
     // save user to database
-    user.save();
+    await user.save();
 
     // send a success message 
     res.status(201).json({ message: "you registered successfully, please login" });

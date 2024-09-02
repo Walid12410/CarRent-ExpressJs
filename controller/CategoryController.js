@@ -27,7 +27,7 @@ module.exports.createNewCategoryController = asyncHandler(async(req,res)=>{
         categoryName : req.body.categoryName
     });
 
-    category.save();
+    await category.save();
 
     res.status(201).json({message : "New Category Added Successfully"});
 });

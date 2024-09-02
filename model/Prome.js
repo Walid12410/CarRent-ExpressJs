@@ -37,17 +37,14 @@ const promoSchema = new mongoose.Schema({
         required: true
     },
     promoTitle : {
-        type: String,
-        required : true,
-        minLength : 2,
-        maxLength : 100,
+        type: String, required : true,
+        minLength : 2, maxLength : 100,
         trim: true
     },
     promoDescription : {
         type: String, required : true,
-        minLength : 2 ,
-        trim : true
-    }
+        minLength : 2, trim : true
+    },
 }, {
     timestamps: true,
     toJSON: { virtuals: true },

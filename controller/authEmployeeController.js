@@ -45,7 +45,7 @@ module.exports.registerEmployeeUserController = asyncHandler(async(req,res)=>{
         password : hashedPassword
     });
 
-    employeeUser.save();
+    await employeeUser.save();
 
     res.status(201).json({message : "Employee account created successfully"});
 });

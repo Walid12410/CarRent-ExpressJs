@@ -42,7 +42,7 @@ function verfiyTokenAndOnlyUser(req,res,next){
 // Verify token and authorization
 function verfiyTokenAndAuthorization(req,res,next){
     verfiyToken(req,res,()=>{
-        if(req.user.id === req.params.id || req.user.isAdmin){
+        if(req.user.id || req.user.isAdmin){
             next();
         }else{
             return res.status(403).json({message : "not allowed, only user himeself or admin"});

@@ -27,7 +27,6 @@ module.exports.createNewPromoController = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "Company not found" });
     }
 
-
     let promoCheck = await Promo.findOne({ promoCode: req.body.promoCode });
     if (promoCheck) {
         return res.status(400).json({
@@ -45,11 +44,11 @@ module.exports.createNewPromoController = asyncHandler(async (req, res) => {
         usageLimit: req.body.usageLimit,
         usedCount: req.body.usedCount,
         companyID: req.body.companyID,
-        promoTitle : req.body.promoTitle,
-        promoDescription : req.body.promoDescription
+        promoTitle: req.body.promoTitle,
+        promoDescription: req.body.promoDescription
     });
 
-    promoCheck.save();
+    await promoCheck.save();
 
     res.status(201).json({ message: "New promo code added successfully" });
 });
@@ -62,10 +61,21 @@ module.exports.createNewPromoController = asyncHandler(async (req, res) => {
  * @access public
 */
 module.exports.getAllPromoCodeController = asyncHandler(async (req, res) => {
-    const promo = await Promo.find().populate({
-        path: "comapanyDetails",
-        populate: { path: "imageCompany", match: { isDefaultImage: true } }
-    });
+    const PROMO_PER_PAGE = 3;
+    const { pageNumber } = req.query;
+    let promo;
+
+    if (pageNumber) {
+        promo = await Promo.find().skip((pageNumber - 1) * PROMO_PER_PAGE)
+            .limit(PROMO_PER_PAGE)
+            .sort({ createdAt: -1 })
+    } else {
+        promo = await Promo.find().populate({
+            path: "comapanyDetails",
+            populate: { path: "imageCompany", match: { isDefaultImage: true } }
+        });
+    }
+
     res.status(200).json(promo);
 });
 
@@ -110,8 +120,8 @@ module.exports.updatePromoCodeController = asyncHandler(async (req, res) => {
             endDate: req.body.endDate,
             usageLimit: req.body.usageLimit,
             usedCount: req.body.usedCount,
-            promoTitle : req.body.promoTitle,
-            promoDescription : req.body.promoDescription
+            promoTitle: req.body.promoTitle,
+            promoDescription: req.body.promoDescription
         }
     }, { new: true });
 
