@@ -45,6 +45,16 @@ const promoSchema = new mongoose.Schema({
         type: String, required : true,
         minLength : 2, trim : true
     },
+    promoImage : {
+        url: {
+            type: String,
+            required: true
+        },
+        cloudinary_id: {
+            type: String,
+            required: true
+        }
+    }
 }, {
     timestamps: true,
     toJSON: { virtuals: true },

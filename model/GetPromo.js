@@ -28,8 +28,8 @@ const getPromoSchema = new mongoose.Schema({
         required: true
     }
 },{timestamps : true,
-    toJSON : {virtuals : true},
-    toObject : {virtuals: true}
+    toJSON : { virtuals : true },
+    toObject : { virtuals: true }
 });
 
 getPromoSchema.virtual("promoDetails",{

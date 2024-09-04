@@ -5,6 +5,9 @@ const { Promo,
 } = require("../model/Prome");
 const { Companies } = require("../model/Company");
 const mongoose = require("mongoose");
+const { cloudinaryRemoveImage , cloudinaryUploadImage } = require("../utils/cloudinary");
+const path = require("path");
+const fs = require("fs");
 
 /**
  * @desc Create new Promo
@@ -147,4 +150,38 @@ module.exports.deleteOnePromoController = asyncHandler(async (req, res) => {
         await Promo.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: "Promo has been succefully deleted" });
     }
+});
+
+
+/**
+ * @desc upload promo image 
+ * @Route /api/promo/upload-image/:id
+ * @method POST
+ * @access private (only employee user)
+*/
+module.exports.uploadPromoImage = asyncHandler(async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: "No file provided" });
+    }
+
+    const imagePath = path.join(__dirname, `../images/${req.file.filename}`);
+    const result = await cloudinaryUploadImage(imagePath);
+    const promo = await Promo.findById(req.params.id);
+
+    if (promo.promoImage && promo.promoImage.cloudinary_id) {
+        await cloudinaryRemoveImage(promo.promoImage.cloudinary_id);
+    }
+
+    promo.promoImage = {
+        url: result.secure_url, 
+        cloudinary_id: result.public_id
+    };
+    await promo.save();
+
+    res.status(200).json({
+        message: "Promo image uploaded successfully",
+        promoImage: { url: result.secure_url, cloudinary_id: result.public_id }
+    });
+
+    fs.unlinkSync(imagePath);
 });

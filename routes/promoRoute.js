@@ -3,12 +3,14 @@ const {getAllPromoCodeController,
     updatePromoCodeController,
     deleteOnePromoController,
     getOnePromoCodeController,
-    createNewPromoController, 
+    createNewPromoController,
+    uploadPromoImage, 
 } = require("../controller/PromeController");
 const verifyEmployeeToken = require("../middlewares/EmployeeToken");
 const validationObjectId = require("../middlewares/validateObjectID");
 const { verfiyToken } = require("../middlewares/verifyToken");
 const { usePromoCodeController, checkPromoCodeController, getPromoCodeController } = require("../controller/GetPromoController");
+const photoUpload = require("../middlewares/uploadProfilePhoto");
   
 
 // api/promo
@@ -34,6 +36,9 @@ router.route("/use")
 router.route("/check-user-promotion")
 .post(verfiyToken, checkPromoCodeController);
 
+//api/promo/upload-image/:id
+router.route("/upload-image/:id")
+.post(validationObjectId,verifyEmployeeToken,photoUpload.single("image"), uploadPromoImage);
 
 
 module.exports = router;
