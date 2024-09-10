@@ -71,7 +71,7 @@ module.exports.loginUserController = asyncHandler(async (req, res) => {
     _id: user._id,
     firstName : user.firstName,
     lastName : user.lastName,
-    profilePhoto : user.ProfilePhoto,
+    profilePhoto : user.profilePhoto,
     isAdmin : user.isAdmin,
     token
    });

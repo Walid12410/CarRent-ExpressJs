@@ -29,6 +29,7 @@ const OfferSchema = new mongoose.Schema({
 });
 
 
+
 // Create the Offer model using the schema
 const Offer = mongoose.model('Offer', OfferSchema);
 

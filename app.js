@@ -1,6 +1,7 @@
 const express = require("express");
 const connectToDB = require("./config/connectToDB");
 const { notFound, errorHandler } = require("./middlewares/error");
+const cors = require("cors");
 require("dotenv").config();
 
 
@@ -12,6 +13,13 @@ const app = express();
 
 
 app.use(express.json());
+
+
+// Cors Policy
+app.use(cors({
+    origin: "http://localhost:3000"
+}))
+
 
 app.get("/",(req,res)=>{
     res.send("Welcome to Car Rent Market!");
@@ -27,6 +35,7 @@ app.use("/api/car-rent", require("./routes/CarRentRoute"));
 app.use("/api/category", require("./routes/CategoryRoute"));
 app.use("/api/promo", require("./routes/promoRoute"));
 app.use("/api/review", require("./routes/reviewRoute"));
+app.use("/api/offer", require("./routes/offerRoute"));
 
 
 // Error Handler Middleware
