@@ -10,6 +10,7 @@ const CarImage = require("../model/CarRentImage");
 const { cloudinaryUploadImage,cloudinaryRemoveImage } = require("../utils/cloudinary");
 const path = require("path");
 const fs = require("fs");
+const carRentAggregation = require("../aggregation/carRentAggregation");
 
 
 /**
@@ -129,11 +130,13 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
     let cars;
 
     if (pageNumber) {
-        cars = await CarRent.find()
-            .skip((pageNumber - 1) * CART_RENT_PER_PAGE)
-            .limit(CART_RENT_PER_PAGE)
-            .sort({ createdAt: -1 })
-            .populate("category").populate("CarImage");
+        cars = await CarRent.aggregate([
+            ...carRentAggregation,
+            {$skip : (pageNumber - 1) * CART_RENT_PER_PAGE},
+            {$limit: CART_RENT_PER_PAGE},
+            {$sort: { createdAt : -1}}
+        ]);
+
     } else if (category) {
         if (!category || !mongoose.Types.ObjectId.isValid(category)) {
             return res.status(400).json({ message: "Invalid Object ID" });

@@ -6,7 +6,7 @@ const { createReviewController,
 } = require("../controller/ReviewController");
 const validationObjectId = require("../middlewares/validateObjectID");
 const {verfiyTokenAndAuthorization,
-    verfiyToken
+verfiyToken
 } = require("../middlewares/verifyToken");
   
 
