@@ -1,6 +1,11 @@
 
 const carRentAggregation = [
     {
+        $match: {
+            carStatus: "Available" 
+        }
+    },
+    {
         $lookup:{
             from : "reviews",
             localField :"_id",

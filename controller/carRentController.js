@@ -125,7 +125,7 @@ module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
  * @access Public
 */
 module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
-    const CART_RENT_PER_PAGE = 5;
+    const CART_RENT_PER_PAGE = 3;
     const { pageNumber, category, company } = req.query;
     let cars;
 
