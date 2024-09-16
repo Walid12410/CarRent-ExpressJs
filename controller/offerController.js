@@ -5,6 +5,8 @@ const { Offer,
 } = require("../model/Offer");
 const mongoose = require("mongoose");
 const { CarRent } = require("../model/CarRent");
+const moment = require("moment");
+const { getActiveOffersAggregation } = require("../aggregation/offerAggregation");
 
 /**
  * @desc Create new offer
@@ -36,6 +38,25 @@ module.exports.createOfferController = asyncHandler(async (req, res) => {
     res.status(201).json({ message: "New offer added successfully" });
 });
 
+/**
+ * @desc get All offer
+ * @Route /api/offer/all-offer
+ * @method GET
+ * @access public 
+*/
+module.exports.getAllOfferController = asyncHandler(async (req, res) => {
+    const limit = req.query.top ? parseInt(req.query.top) : null;
+    const offersQuery = Offer.find().populate("car").sort({createdAt : -1 });
+
+    if (limit) {
+        offersQuery.limit(limit); // Apply limit if 'top' exists
+    }
+
+    const offers = await offersQuery;
+
+    res.status(200).json(offers);
+});
+
 
 /**
  * @desc get All offer
@@ -43,9 +64,28 @@ module.exports.createOfferController = asyncHandler(async (req, res) => {
  * @method GET
  * @access public 
 */
-module.exports.getAllOfferController = asyncHandler(async (req, res) => {
-    const offers = await Offer.find();
-    res.status(200).json(offers);
+module.exports.getActiveOffersController = asyncHandler(async (req, res) => {
+    const { currentTime , top } = req.query;
+
+    if (!currentTime) {
+        return res.status(400).json({ message: "Current time is required" });
+    }
+
+    const dateFormat = "YYYY-MM-DDTHH:mm:ss"; 
+    const userCurrentTime = moment(currentTime, dateFormat, true).utc().toDate();
+
+    if (!moment(userCurrentTime).isValid()) {
+        return res.status(400).json({ message: "Invalid date format" });
+    }
+
+    const limit = top === '3' ? 3 : 0;
+    let aggregationPipeline = getActiveOffersAggregation(userCurrentTime);
+    if (limit > 0) {
+        aggregationPipeline.push({ $limit: limit });
+    }
+    const activeOffers = await Offer.aggregate(aggregationPipeline);
+
+    res.status(200).json(activeOffers);
 });
 
 
@@ -111,11 +151,11 @@ module.exports.updateOfferController = asyncHandler(async (req, res) => {
  * @method DELETE
  * @access private (only Employee User)
 */
-module.exports.deleteOfferController = asyncHandler(async(req,res)=>{
+module.exports.deleteOfferController = asyncHandler(async (req, res) => {
     const offerFound = await Offer.findById(req.params.id);
-    if(!offerFound){
-        res.status(404).json({message : "Offer not found"});
-    }else{
+    if (!offerFound) {
+        res.status(404).json({ message: "Offer not found" });
+    } else {
         await Offer.findByIdAndDelete(req.params.id);
         res.status(200).json("Offer deleted successfully");
     }

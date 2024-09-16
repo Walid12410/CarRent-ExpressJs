@@ -72,7 +72,6 @@ module.exports.createCarRentController = asyncHandler(async (req, res) => {
  * @method POST
  * @access private (only Employee)
 */
-
 module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
     const { files } = req;
     const { id: carRentID } = req.params;
@@ -133,8 +132,7 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
         cars = await CarRent.aggregate([
             ...carRentAggregation,
             {$skip : (pageNumber - 1) * CART_RENT_PER_PAGE},
-            {$limit: CART_RENT_PER_PAGE},
-            {$sort: { createdAt : -1}}
+            {$limit: CART_RENT_PER_PAGE}
         ]);
 
     } else if (category) {

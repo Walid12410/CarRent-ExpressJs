@@ -28,6 +28,11 @@ const OfferSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
+OfferSchema.virtual("car",{
+    ref : "CarRent",
+    localField : "carId",
+    foreignField : "_id"
+});
 
 
 // Create the Offer model using the schema

@@ -1,9 +1,10 @@
 const router = require("express").Router();
-const { getAllOfferController,
+const { getActiveOffersController,
     createOfferController,
     getOneOfferController,
     updateOfferController,
-    deleteOfferController
+    deleteOfferController,
+    getAllOfferController
 } = require("../controller/OfferController");
 const validationObjectId = require("../middlewares/validateObjectID");
 const verifyEmployeeToken = require("../middlewares/EmployeeToken");
@@ -12,6 +13,11 @@ const verifyEmployeeToken = require("../middlewares/EmployeeToken");
 
 // /api/offer
 router.route("/") 
+.get(getActiveOffersController);
+
+
+// /api/offer/all-offer
+router.route("/all-offer") 
 .get(getAllOfferController);
 
 

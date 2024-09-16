@@ -5,6 +5,7 @@ const { Companies,
 } = require("../model/Company");
 const { CompanyImage } = require("../model/CompanyImage");
 const { cloudinaryRemoveImage } = require("../utils/cloudinary");
+const companyAggregation = require("../aggregation/companyAggregation");
 
 /**
  * @desc Create new company
@@ -45,10 +46,19 @@ module.exports.ceateNewCompanyController = asyncHandler(async (req, res) => {
  * @access Public
 */
 module.exports.getAllCompaniesController = asyncHandler(async (req, res) => {
-    const companies = await Companies.find().populate("imageCompany");
+    const limit = req.query.top === '3' ? 3 : 0;
+    let companies;
+    if(limit){
+        companies = await Companies.aggregate([
+            ...companyAggregation,
+            {$limit : limit},
+            {$sort: { createdAt : -1 }}
+        ]);
+    }else{
+        companies = await Companies.find().populate("imageCompany");
+    }
     res.status(200).json(companies);
 });
-
 
 /**
  * @desc Get One Company
