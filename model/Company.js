@@ -13,22 +13,22 @@ const CompaniesSchema = new mongoose.Schema({
         trim: true, minLength : 5,
         maxLength: 100,
     },
-    CompanyPhoneNumber: {
+    companyPhoneNumber: {
         type: String,  required : true,
         trim: true,  minLength :6 ,
         maxLength : 20
     },
-    CompanyAddress : {
+    companyAddress : {
         type: String, required: true,
         trim: true, minLength : 2,
         maxLength: 100,
     },
-    CompanyCity: {
+    companyCity: {
         type: String, required: true,
         trim: true, minLength : 2,
         maxLength: 100,
     },
-    CompanyState: {
+    companyState: {
         type: String, required: true,
         trim: true, minLength : 2,
         maxLength: 100,

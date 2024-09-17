@@ -31,11 +31,12 @@ app.use("/api/auth",require("./routes/authRoute"));
 app.use("/api/user",require("./routes/userRoute"));
 app.use("/api/company",require("./routes/companyRoute"));
 app.use("/api/auth-employee",require("./routes/authEmployeeRoute"));
-app.use("/api/car-rent", require("./routes/CarRentRoute"));
-app.use("/api/category", require("./routes/CategoryRoute"));
+app.use("/api/car-rent", require("./routes/carRentRoute"));
+app.use("/api/category", require("./routes/categoryRoute"));
 app.use("/api/promo", require("./routes/promoRoute"));
 app.use("/api/review", require("./routes/reviewRoute"));
 app.use("/api/offer", require("./routes/offerRoute"));
+app.use("/api/employee", require("./routes/employeeRoute"));
 
 
 // Error Handler Middleware

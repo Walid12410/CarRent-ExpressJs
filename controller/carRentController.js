@@ -228,7 +228,7 @@ module.exports.updateOneCarRentController = asyncHandler(async (req, res) => {
 
 
 /**
- * @desc Update Car By ID
+ * @desc Delete Car By ID
  * @Route /api/car-rent/:id
  * @method DELETE
  * @access private(only employee)

@@ -10,28 +10,23 @@ const EmployeeUserSchema = new mongoose.Schema({
         required : true
     },
     userName: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 2,
+        type: String, required: true,
+        trim: true, minLength: 2,
         maxLength: 100
     },
     email: {
-        type: String,
-        required: true,
-        unique: true,
-        minLength: 5,
-        maxLength: 100,
-        trim: true
+        type: String, required: true,
+        unique: true, minLength: 5,
+        maxLength: 100, trim: true
     },
     password: {
-        type: String,
-        required: true,
-        minLength: 8,
-        maxLength: 100,
+        type: String, required: true,
+        minLength: 8, maxLength: 100,
     },
 }, {
-    timestamps: true
+    timestamps: true,
+    toJSON : {virtuals : true},
+    toObject : {virtuals : true}
 });
 
 
@@ -39,6 +34,12 @@ const EmployeeUserSchema = new mongoose.Schema({
 EmployeeUserSchema.methods.generateEmployeeAuthToken = function () {
     return jwt.sign({ id: this._id }, process.env.JWT_SECRET_EMPLOYEE, { expiresIn: '1h' });
 }
+
+EmployeeUserSchema.virtual("companyDetails", {
+    ref: "Companies",
+    foreignField : "_id",
+    localField : "companyID"
+});
 
 // User Model
 const EmployeeUser = mongoose.model("EmployeeUser", EmployeeUserSchema);

@@ -27,10 +27,10 @@ module.exports.ceateNewCompanyController = asyncHandler(async (req, res) => {
     company = new Companies({
         companyName: req.body.companyName,
         companyEmail: req.body.companyEmail,
-        CompanyPhoneNumber: req.body.CompanyPhoneNumber,
-        CompanyAddress: req.body.CompanyAddress,
-        CompanyCity: req.body.CompanyCity,
-        CompanyState: req.body.CompanyState
+        companyPhoneNumber: req.body.companyPhoneNumber,
+        companyAddress: req.body.companyAddress,
+        companyCity: req.body.companyCity,
+        companyState: req.body.companyState
     });
 
     await company.save();
@@ -92,10 +92,10 @@ module.exports.updateCompanyController = asyncHandler(async (req, res) => {
         $set: {
             companyName: req.body.companyName,
             companyEmail: req.body.companyEmail,
-            CompanyPhoneNumber: req.body.CompanyPhoneNumber,
-            CompanyAddress: req.body.CompanyAddress,
-            CompanyCity: req.body.CompanyCity,
-            CompanyState: req.body.CompanyState
+            companyPhoneNumber: req.body.companyPhoneNumber,
+            companyAddress: req.body.companyAddress,
+            companyCity: req.body.companyCity,
+            companyState: req.body.companyState
         }
     }, { new: true });
 
