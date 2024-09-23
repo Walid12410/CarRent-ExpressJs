@@ -11,6 +11,7 @@ const { cloudinaryUploadImage,cloudinaryRemoveImage } = require("../utils/cloudi
 const path = require("path");
 const fs = require("fs");
 const carRentAggregation = require("../aggregation/carRentAggregation");
+const carRentAdminAggregation = require("../aggregation/carRentAdminAggregation");
 
 
 /**
@@ -124,36 +125,46 @@ module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
  * @access Public
 */
 module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
-    const CART_RENT_PER_PAGE = 3;
-    const { pageNumber, category, company } = req.query;
+    const DEFAULT_CART_RENT_PER_PAGE = 3;
+    const { pageNumber, category, company, car_rent_per_page, isAdmin } = req.query;
+    const carsPerPage = car_rent_per_page ? parseInt(car_rent_per_page) : DEFAULT_CART_RENT_PER_PAGE;
     let cars;
 
-    if (pageNumber) {
-        cars = await CarRent.aggregate([
-            ...carRentAggregation,
-            {$skip : (pageNumber - 1) * CART_RENT_PER_PAGE},
-            {$limit: CART_RENT_PER_PAGE}
-        ]);
-
-    } else if (category) {
-        if (!category || !mongoose.Types.ObjectId.isValid(category)) {
-            return res.status(400).json({ message: "Invalid Object ID" });
+    if (isAdmin) {
+        if (pageNumber) {
+            cars = await CarRent.aggregate([
+                ...carRentAdminAggregation,
+                { $skip: (pageNumber - 1) * carsPerPage },
+                { $limit: carsPerPage }
+            ]);
+        } else {
+            cars = await CarRent.aggregate([...carRentAdminAggregation]);
         }
-
-        cars = await CarRent.find({ categoryId: category })
-            .sort({ createdAt: -1 })
-            .populate("category").populate("CarImage");
-    } else if (company) {
-        if (!company || !mongoose.Types.ObjectId.isValid(company)) {
-            return res.status(400).json({ message: "Invalid Object ID" });
-        }
-
-        cars = await CarRent.find({ companyId: company })
-            .sort({ createdAt: -1 })
-            .populate("category").populate("CarImage");
     } else {
-        cars = await CarRent.find().sort({ createdAt: -1 })
-            .populate("category").populate("CarImage");
+        if (pageNumber) {
+            cars = await CarRent.aggregate([
+                ...carRentAggregation,
+                { $skip: (pageNumber - 1) * carsPerPage },
+                { $limit: carsPerPage }
+            ]);
+        } else if (category) {
+            if (!category || !mongoose.Types.ObjectId.isValid(category)) {
+                return res.status(400).json({ message: "Invalid Object ID" });
+            }
+            cars = await CarRent.find({ categoryId: category })
+                .sort({ createdAt: -1 })
+                .populate("category").populate("CarImage");
+        } else if (company) {
+            if (!company || !mongoose.Types.ObjectId.isValid(company)) {
+                return res.status(400).json({ message: "Invalid Object ID" });
+            }
+            cars = await CarRent.find({ companyId: company })
+                .sort({ createdAt: -1 })
+                .populate("category").populate("CarImage");
+        } else {
+            cars = await CarRent.find().sort({ createdAt: -1 })
+                .populate("category").populate("CarImage");
+        }
     }
     res.status(200).json(cars);
 });
@@ -261,9 +272,9 @@ module.exports.deleteCarRentController = asyncHandler(async (req, res) => {
  * @desc Count how many carRent
  * @Route /api/car-rent/count
  * @method GET
- * @access PUBLIC
+ * @access public
 */
 module.exports.countAllCarRentController = asyncHandler(async (req, res) => {
     const carRentCount = await CarRent.countDocuments();
-    res.status(200).json({ CarRentTotal: carRentCount });
+    res.status(200).json(carRentCount);
 });

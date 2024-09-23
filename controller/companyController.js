@@ -9,9 +9,9 @@ const companyAggregation = require("../aggregation/companyAggregation");
 
 /**
  * @desc Create new company
- * @Route /api/companies/list
+ * @Route /api/company/list
  * @method POST
- * @access Private (only Admin)
+ * @access private (only Admin)
 */
 module.exports.ceateNewCompanyController = asyncHandler(async (req, res) => {
     const { error } = validationCompainesCreate(req.body);
@@ -41,7 +41,7 @@ module.exports.ceateNewCompanyController = asyncHandler(async (req, res) => {
 
 /**
  * @desc Get All Companies
- * @Route /api/companies/list
+ * @Route /api/company/list
  * @method GET
  * @access Public
 */
@@ -62,7 +62,7 @@ module.exports.getAllCompaniesController = asyncHandler(async (req, res) => {
 
 /**
  * @desc Get One Company
- * @Route /api/companies/list/:id
+ * @Route /api/company/list/:id
  * @method GET
  * @access Public
 */
@@ -78,7 +78,7 @@ module.exports.getOneCompanyController = asyncHandler(async (req, res) => {
 
 /**
  * @desc Update Company Details
- * @Route /api/companies/list/:id
+ * @Route /api/company/list/:id
  * @method PUT
  * @access private (Admin Only)
 */
@@ -119,7 +119,7 @@ module.exports.CountAllCompaniesController = asyncHandler(async (req, res) => {
 
 /**
  * @desc Delete Company
- * @Route /api/companies/list/:id
+ * @Route /api/company/list/:id
  * @method DELETE
  * @access private (Admin Only)
 */
@@ -128,9 +128,7 @@ module.exports.deleteCompanyController = asyncHandler(async (req, res) => {
     if (!companyFound) {
         return res.status(404).json({ message: "Company not found" });
     }
-    if (!req.user.isAdmin) {
-        return res.status(403).json({ message: "Access denied, forbidden" });
-    }
+
     const companyImages = await CompanyImage.find({ companyID: req.params.id });
 
     for (const image of companyImages) {

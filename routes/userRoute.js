@@ -20,7 +20,7 @@ router.route("/profile/:id")
 
 // api/user/count
 router.route("/count")
-.get(verifyTokenAndAdmin , countUserController);
+.get(countUserController);
 
 // api/user/profile/upload-image
 router.route("/profile/upload-image")

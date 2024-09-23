@@ -20,7 +20,7 @@ router.route("/")
 .get(getAllCarRentController)
 .post(verifyEmployeeToken, createCarRentController);
 
-// api/user/profile
+// api/car-rent/:id
 router.route("/:id")
 .get(validationObjectId, getOneCarRentController)
 .put(validationObjectId,verifyEmployeeToken , updateOneCarRentController)

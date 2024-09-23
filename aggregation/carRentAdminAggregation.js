@@ -1,10 +1,5 @@
 
-const carRentAggregation = [
-    {
-        $match: {
-            carStatus: "available" 
-        }
-    },
+const carRentAdminAggregation = [
     {
         $lookup:{
             from : "reviews",
@@ -41,4 +36,4 @@ const carRentAggregation = [
 ];
 
 
-module.exports = carRentAggregation;
+module.exports = carRentAdminAggregation;

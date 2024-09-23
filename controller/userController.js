@@ -5,7 +5,6 @@ const path = require("path");
 const fs = require("fs");
 const { cloudinaryUploadImage,
     cloudinaryRemoveImage,
-    cloudinaryRemoveMultipleImage
 } = require("../utils/cloudinary");
 
 /**
@@ -15,7 +14,18 @@ const { cloudinaryUploadImage,
  * @access private (only Admin)
 */
 module.exports.getAllUserController = asyncHandler(async (req, res) => {
-    const users = await User.find().select("-password");
+    const USER_PER_PAGE = 10;
+    const {pageNumber} = req.query;
+    let users; 
+
+    if(pageNumber){
+        users = await User.find()
+        .skip((pageNumber - 1) * USER_PER_PAGE)
+        .limit(USER_PER_PAGE).sort({ createdAt : -1 }).select("-password");
+    }else{
+        users = await User.find().select("-password");
+    }
+
     res.status(200).json(users);
 });
 
@@ -65,6 +75,7 @@ module.exports.updateUserController = asyncHandler(async (req, res) => {
     res.status(200).json(updateUser);
 });
 
+
 /**
  * @desc Count All User
  * @Route /api/user/count
@@ -73,8 +84,9 @@ module.exports.updateUserController = asyncHandler(async (req, res) => {
 */
 module.exports.countUserController = asyncHandler(async (req, res) => {
     const userCount = await User.countDocuments();
-    res.status(200).json({ count: userCount });
+    res.status(200).json(userCount);
 });
+
 
 /**
  * @desc Select All User

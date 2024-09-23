@@ -53,10 +53,10 @@ function validationCompainesCreate(obj){
     const schema = Joi.object({
         companyName : Joi.string().trim().min(2).max(100).required(),
         companyEmail :  Joi.string().trim().min(5).max(100).required(),
-        CompanyPhoneNumber: Joi.string().min(6).max(20).trim().required(),
-        CompanyAddress : Joi.string().trim().min(2).max(100).required(),
-        CompanyCity: Joi.string().trim().min(2).max(100).required(),
-        CompanyState: Joi.string().trim().min(2).max(100).required(),
+        companyPhoneNumber: Joi.string().min(6).max(20).trim().required(),
+        companyAddress : Joi.string().trim().min(2).max(100).required(),
+        companyCity: Joi.string().trim().min(2).max(100).required(),
+        companyState: Joi.string().trim().min(2).max(100).required(),
     });
     return schema.validate(obj);
 }
@@ -66,10 +66,10 @@ function validationComapainesUpdate(obj){
     const schema = Joi.object({
         companyName : Joi.string().trim().min(2).max(100),
         companyEmail :  Joi.string().trim().min(5).max(100).email(),
-        CompanyPhoneNumber: Joi.string().min(6).max(20).trim(),
-        CompanyAddress : Joi.string().trim().min(2).max(100),
-        CompanyCity: Joi.string().trim().min(2).max(100),
-        CompanyState: Joi.string().trim().min(2).max(100),
+        companyPhoneNumber: Joi.string().min(6).max(20).trim(),
+        companyAddress : Joi.string().trim().min(2).max(100),
+        companyCity: Joi.string().trim().min(2).max(100),
+        companyState: Joi.string().trim().min(2).max(100),
     });
     return schema.validate(obj);
 }
