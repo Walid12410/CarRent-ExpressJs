@@ -117,6 +117,7 @@ module.exports.CountAllCompaniesController = asyncHandler(async (req, res) => {
     res.status(200).json({ Count: countCompanies });
 });
 
+
 /**
  * @desc Delete Company
  * @Route /api/company/list/:id

@@ -39,6 +39,7 @@ app.use("/api/offer", require("./routes/offerRoute"));
 app.use("/api/employee", require("./routes/employeeRoute"));
 app.use("/api/fakeData",require("./fakeData"));
 
+
 // Error Handler Middleware
 app.use(notFound);
 app.use(errorHandler);
