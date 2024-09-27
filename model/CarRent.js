@@ -84,6 +84,8 @@ CarRentSchema.virtual("category", {
 });
 
 
+
+
 CarRentSchema.virtual("companyDetails",{
     ref: "Companies",
     foreignField : "_id",

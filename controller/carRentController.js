@@ -122,7 +122,7 @@ module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
  * @desc Get All Car
  * @Route /api/car-rent
  * @method GET
- * @access Public
+ * @access public
 */
 module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
     const DEFAULT_CART_RENT_PER_PAGE = 3;
@@ -174,13 +174,13 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
  * @desc Get One Car By ID
  * @Route /api/car-rent/:id
  * @method GET
- * @access Public
+ * @access public
 */
 module.exports.getOneCarRentController = asyncHandler(async (req, res) => {
     const car = await CarRent.findById(req.params.id).populate({
         path: "companyDetails",
         populate: { path: "imageCompany", match: { isDefaultImage: true } }
-    }).populate("CarImage");
+    }).populate("CarImage").populate("category");
     if (car) {
         res.status(200).json(car);
     } else {

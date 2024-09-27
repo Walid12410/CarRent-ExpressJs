@@ -54,7 +54,7 @@ module.exports.registerEmployeeUserController = asyncHandler(async(req,res)=>{
  * @desc Login Employee User
  * @Route /api/auth-employee/login
  * @method POST
- * @access Public
+ * @access public
 */
 module.exports.loginEmployeeUserController = asyncHandler(async(req,res)=>{
     const {error} = validationLoginEmployeeUser(req.body);
