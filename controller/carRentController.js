@@ -7,12 +7,12 @@ const { Companies } = require("../model/Company");
 const mongoose = require("mongoose");
 const { Category } = require("../model/Category");
 const CarImage = require("../model/CarRentImage");
-const { cloudinaryUploadImage,cloudinaryRemoveImage } = require("../utils/cloudinary");
+const { cloudinaryUploadImage, cloudinaryRemoveImage } = require("../utils/cloudinary");
 const path = require("path");
 const fs = require("fs");
-const carRentAggregation = require("../aggregation/carRentAggregation");
-const carRentAdminAggregation = require("../aggregation/carRentAdminAggregation");
+const { carRentAggregation, carRentAdminAggregation } = require("../aggregation/carRentAggregation");
 
+const ObjectId = mongoose.Types.ObjectId; // Correctly reference ObjectId
 
 /**
  * @desc Create new Car rent
@@ -92,13 +92,13 @@ module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
         for (const file of files) {
             const imagePath = path.join(__dirname, `../images/${file.filename}`);
             const result = await cloudinaryUploadImage(imagePath);
-            
+
             if (!result?.public_id) {
                 throw new Error('Image upload failed');
             }
 
             const newImage = new CarImage({
-                carRentID : carRentID,
+                carRentID: carRentID,
                 carImage: { url: result.secure_url, cloudinary_id: result.public_id },
             });
 
@@ -126,7 +126,7 @@ module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
 */
 module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
     const DEFAULT_CART_RENT_PER_PAGE = 3;
-    const { pageNumber, category, company, car_rent_per_page, isAdmin } = req.query;
+    const { pageNumber, pageNumberCat, category, company, car_rent_per_page, isAdmin } = req.query;
     const carsPerPage = car_rent_per_page ? parseInt(car_rent_per_page) : DEFAULT_CART_RENT_PER_PAGE;
     let cars;
 
@@ -151,9 +151,19 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
             if (!category || !mongoose.Types.ObjectId.isValid(category)) {
                 return res.status(400).json({ message: "Invalid Object ID" });
             }
-            cars = await CarRent.find({ categoryId: category })
-                .sort({ createdAt: -1 })
-                .populate("category").populate("CarImage");
+            if (pageNumberCat) {
+                cars = await CarRent.aggregate([
+                    { $match: { categoryId: new mongoose.Types.ObjectId(category), carStatus: "available" } },
+                    ...carRentAggregation,
+                    { $skip: (pageNumberCat - 1) * DEFAULT_CART_RENT_PER_PAGE },
+                    { $limit: DEFAULT_CART_RENT_PER_PAGE }
+                ]);
+            } else {
+                cars = await CarRent.aggregate([
+                    { $match: { categoryId: new mongoose.Types.ObjectId(category), carStatus: "available" } },
+                    ...carRentAggregation,
+                ]);
+            }
         } else if (company) {
             if (!company || !mongoose.Types.ObjectId.isValid(company)) {
                 return res.status(400).json({ message: "Invalid Object ID" });
