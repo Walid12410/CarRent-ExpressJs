@@ -8,7 +8,7 @@ const {getAllPromoCodeController,
 } = require("../controller/PromeController");
 const verifyEmployeeToken = require("../middlewares/EmployeeToken");
 const validationObjectId = require("../middlewares/validateObjectID");
-const { verfiyToken } = require("../middlewares/verifyToken");
+const { verfiyToken, verifyTokenAndAdmin } = require("../middlewares/verifyToken");
 const { usePromoCodeController, checkPromoCodeController, getPromoCodeController } = require("../controller/GetPromoController");
 const photoUpload = require("../middlewares/uploadProfilePhoto");
   
@@ -16,7 +16,7 @@ const photoUpload = require("../middlewares/uploadProfilePhoto");
 // api/promo
 router.route("/") 
 .get(getAllPromoCodeController)
-.post(verifyEmployeeToken, createNewPromoController);
+.post(verifyTokenAndAdmin, createNewPromoController);
 
 // api/promo/:id
 router.route("/:id")
