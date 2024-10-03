@@ -104,8 +104,8 @@ npm start
 - `GET api/car-rent`: Get all car. (public)
 - `POST api/car-rent`: Create a new car. (private only employee)
 - `GET api/car-rent/:id`: Get a single car by ID. (public)
-- `PUT api/car-rent/:id`: Update a company by ID. (private only employee)
-- `DELETE api/car-rent/:id`: Delete a company by ID. (private only employee)
+- `PUT api/car-rent/:id`: Update a car by ID. (private only employee)
+- `DELETE api/car-rent/:id`: Delete a car by ID. (private only employee)
 - `GET api/car-rent/count`: Count car. (public)
 - `DELETE api/car-image/:id`: upload image. (private only employee)
 
