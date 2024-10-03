@@ -3,8 +3,6 @@ const { Promo,
     validationCreatePromo,
     validationUpdatePromo
 } = require("../model/Prome");
-const { Companies } = require("../model/Company");
-const mongoose = require("mongoose");
 const { cloudinaryRemoveImage , cloudinaryUploadImage } = require("../utils/cloudinary");
 const path = require("path");
 const fs = require("fs");
@@ -13,21 +11,12 @@ const fs = require("fs");
  * @desc Create new Promo
  * @Route /api/promo
  * @method POST
- * @access Private (only Employee User)
+ * @access Private (only admin)
 */
 module.exports.createNewPromoController = asyncHandler(async (req, res) => {
     const { error } = validationCreatePromo(req.body);
     if (error) {
         return res.status(400).json({ message: error.details[0].message });
-    }
-
-    if (!req.body.companyID || !mongoose.Types.ObjectId.isValid(req.body.companyID)) {
-        return res.status(400).json({ message: "Invalid Object ID" });
-    }
-
-    let companyFound = await Companies.findOne({ _id: req.body.companyID });
-    if (!companyFound) {
-        return res.status(400).json({ message: "Company not found" });
     }
 
     let promoCheck = await Promo.findOne({ promoCode: req.body.promoCode });
@@ -46,7 +35,6 @@ module.exports.createNewPromoController = asyncHandler(async (req, res) => {
         endDate: req.body.endDate,
         usageLimit: req.body.usageLimit,
         usedCount: req.body.usedCount,
-        companyID: req.body.companyID,
         promoTitle: req.body.promoTitle,
         promoDescription: req.body.promoDescription
     });
@@ -73,10 +61,7 @@ module.exports.getAllPromoCodeController = asyncHandler(async (req, res) => {
             .limit(PROMO_PER_PAGE)
             .sort({ createdAt: -1 })
     } else {
-        promo = await Promo.find().populate({
-            path: "comapanyDetails",
-            populate: { path: "imageCompany", match: { isDefaultImage: true } }
-        });
+        promo = await Promo.find();
     }
 
     res.status(200).json(promo);
@@ -90,10 +75,7 @@ module.exports.getAllPromoCodeController = asyncHandler(async (req, res) => {
  * @access public
 */
 module.exports.getOnePromoCodeController = asyncHandler(async (req, res) => {
-    const promo = await Promo.findById(req.params.id).populate({
-        path: "comapanyDetails",
-        populate: { path: "imageCompany", match: { isDefaultImage: true } }
-    });
+    const promo = await Promo.findById(req.params.id);
     if (promo) {
         res.status(200).json(promo);
     } else {

@@ -31,11 +31,6 @@ const promoSchema = new mongoose.Schema({
         type: String, enum: ['Active', 'Expired', 'Inactive'],
         default: 'Active'
     },
-    companyID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Companies",
-        required: true
-    },
     promoTitle : {
         type: String, required : true,
         minLength : 2, maxLength : 100,
@@ -59,13 +54,6 @@ const promoSchema = new mongoose.Schema({
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
-});
-
-
-promoSchema.virtual("comapanyDetails", {
-    ref: "Companies",
-    foreignField: "_id",
-    localField: "companyID"
 });
 
 

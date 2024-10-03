@@ -77,6 +77,7 @@ const carRentAdminAggregation = [
 ];
 
 
-module.exports = {carRentAggregation,
+module.exports = {
+    carRentAggregation,
     carRentAdminAggregation
 };
