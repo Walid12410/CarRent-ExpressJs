@@ -1,172 +1,148 @@
-Car Rental API
+ Car Rent Api
+
 This is an Express.js-based API providing full car rental service functionality, including user registration, login, car rental, promo code management, and notification services. Admins can create companies and employees, and employees can manage cars and create rental offers.
 
-Table of Contents
-Features
-Technologies
-Prerequisites
-Installation
-Database Setup
-API Endpoints
-Authentication
-Notifications
-Admin Operations
-Employee Operations
-User Operations
-Contributing
-License
-Features
-User Registration and Login: Create an account and log in to rent cars.
-Car Rental: Users can browse available cars and rent them.
-Promo Codes: Users can apply promo codes for discounts.
-Notifications: Receive notifications for bookings or offers.
-Admin Panel: Create companies and employees.
-Employee Panel: Manage cars and create rental offers.
-Technologies
-Node.js
-Express.js
-MongoDB
-JWT for authentication
-Firebase for notifications (optional)
-Cloudinary for image management (optional)
-Prerequisites
-Before running this project, ensure you have:
+## Features
 
-Node.js (v14 or higher)
-MongoDB installed locally or accessible via a service like MongoDB Atlas
-Firebase (for notifications) and Cloudinary accounts if those features are used
-Installation
-Clone the repository:
+- **User Management**: User authentication and authorization using JWT tokens.
+- **Post Management**: Create, read, update, and delete posts.
+- **Toggle Like**: Like and unlike posts.
+- **Token Verification**: Secure access to protected routes with JWT.
+- **Image Upload**: Upload and manage images with Cloudinary.
+- **Middleware**: Custom middleware for various functionalities including validation and error handling.
+- **Validation**: Validation for ObjectId to ensure valid MongoDB document IDs.
+- **Error Handling**: Centralized error handling for consistent API responses.
+- **Private Access**: Ensure certain API endpoints are accessible only to authenticated users using token verification.
 
-bash
-Copy code
-git clone https://github.com/yourusername/car-rental-api.git
-cd car-rental-api
-Install the dependencies:
+## Technologies Used
 
-bash
-Copy code
+- **Express.js**: Web framework for Node.js.
+- **MongoDB**: NoSQL database for data storage.
+- **Mongoose**: ODM (Object Data Modeling) library for MongoDB and Node.js.
+- **JWT (JsonWebToken)**: For authentication and authorization.
+- **Cloudinary**: Cloud-based image and video management services.
+- **Bcrypt**: Library to hash user passwords.
+- **Express-Async-Handler**: Simple middleware for handling exceptions inside of async express routes.
+- **Firebase**: firebase to send notification
+- **More-Library**: dotenv,joi,multer etc...
+
+## Setup and Installation
+
+### Clone the repository:
+
+```sh
+git clone https://github.com/Walid12410/CarRent-ExpressJs
+cd CarRent-ExpressJs
+```
+
+### Install dependencies:
+
+```sh
 npm install
-Create a .env file in the root directory with the following variables:
+```
 
-bash
-Copy code
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/car-rental
+### Set up environment variables:
+
+Create a `.env` file in the root directory and add the following variables:
+
+```env
+MONGODB_URI=your_mongodb_uri
 JWT_SECRET=your_jwt_secret
-CLOUDINARY_URL=cloudinary://your_cloudinary_key
-FIREBASE_KEY_PATH=path_to_firebase_key_file
-Start the server:
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
 
-bash
-Copy code
+### Start the server:
+
+```sh
 npm start
-Database Setup
-This project uses MongoDB for data storage.
+```
 
-Set up a MongoDB instance locally or using a service like MongoDB Atlas.
-Update the MONGODB_URI in the .env file with your MongoDB connection string.
-The necessary collections will be created automatically on the first run.
-API Endpoints
-Authentication
-POST /api/register
-Register a new user.
+## API Endpoints
 
-json
-Copy code
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "123456"
-}
-POST /api/login
-Login a user and receive a JWT token.
+### Auth Routes:
 
-json
-Copy code
-{
-  "email": "john@example.com",
-  "password": "123456"
-}
-User Operations
-POST /api/rent-car
-Rent a car.
+- `POST /api/auth/register`: Register a new user.
+- `POST /api/auth/login`: Authenticate a user and return a token.
 
-json
-Copy code
-{
-  "carId": "abc123",
-  "rentDays": 3
-}
-Requires Authorization: Bearer <JWT_TOKEN>
-GET /api/promo/
+### User Routes:
 
-Retrieve details for a specific promo code.
+- `GET /api/users/profile`: Get all Users. (Private)
+- `GET /api/users/profile/:id`: Get user and post by ID. (Private)
+- `PUT /api/users/profile/:id`: Update a User Profile by ID. (Private)
+- `DELETE /api/users/profile/:id`: Delete a User by ID. (Private)
+- `GET /api/users/count`: Count Users. (Private)
+- `POST /api/users/profile/profile-photo-upload`: Upload Image. (Private)
 
-GET /api/notifications
-Get user notifications.
+### Post Routes:
 
-Admin Operations
-POST /api/admin/company
-Create a new company.
+- `GET /api/posts`: Get all posts. (Public)
+- `POST /api/posts`: Create a new post. (Private)
+- `GET /api/posts/:id`: Get a single post by ID. (Public)
+- `PUT /api/posts/:id`: Update a post by ID. (Private)
+- `DELETE /api/posts/:id`: Delete a post by ID. (Private)
+- `GET /api/post/count`: Count Posts. (Public)
+- `PUT /api/posts/update-image`: Upload Image. (Private)
 
-json
-Copy code
-{
-  "companyName": "Rent-a-Car",
-  "companyEmail": "info@rentacar.com",
-  "companyAddress": "Downtown, City"
-}
-Requires Admin Authorization: Authorization: Bearer <ADMIN_JWT_TOKEN>
-POST /api/admin/employee
-Create a new employee for a company.
+### Like Routes:
 
-json
-Copy code
-{
-  "companyId": "abc123",
-  "employeeName": "Jane Doe",
-  "employeeEmail": "jane@example.com"
-}
-Requires Admin Authorization: Authorization: Bearer <ADMIN_JWT_TOKEN>
-Employee Operations
-POST /api/employee/car
-Add a new car to the system.
+- `PUT /api/posts/like/:id`: Toggle like on a post. (Private)
 
-json
-Copy code
-{
-  "carModel": "Toyota Camry",
-  "carPrice": 50,
-  "companyId": "abc123"
-}
-Requires Employee Authorization: Authorization: Bearer <EMPLOYEE_JWT_TOKEN>
-POST /api/employee/offer
-Create an offer for a car.
+### Comments Routes:
 
-json
-Copy code
-{
-  "carId": "abc123",
-  "discountPercentage": 20
-}
-Requires Employee Authorization: Authorization: Bearer <EMPLOYEE_JWT_TOKEN>
-Authentication
-This API uses JWT for authentication. After logging in, include the JWT in the Authorization header for all requests requiring authentication.
+- `//`.
 
-Example:
+## Middleware
 
-bash
-Copy code
-Authorization: Bearer <JWT_TOKEN>
-Notifications
-Notifications are sent using Firebase Cloud Messaging (FCM). Users receive notifications for various events like rentals, offers, and promotions.
+- **Auth Middleware**: Protect routes by verifying JWT tokens.
+- **Error Handler**: Centralized error handling for API responses.
+- **ObjectId Validator**: Validate MongoDB ObjectId for routes with parameters.
 
-Contributing
-Contributions are welcome! To contribute:
+## Private Access
 
-Fork the repository.
-Create a new branch for your feature or bugfix.
-Submit a pull request.
-License
-This project is licensed under the MIT License.
+To ensure private access to certain API endpoints, the Auth Middleware verifies the JWT token before granting access. This middleware is applied to routes that require authentication.
+
+### Example of Private Access Middleware
+
+```javascript
+const jwt = require('jsonwebtoken');
+
+const protect = (req, res, next) => {
+  let token;
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    try {
+      token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decoded;
+      next();
+    } catch (error) {
+      res.status(401);
+      throw new Error('Not authorized, token failed');
+    }
+  }
+  if (!token) {
+    res.status(401);
+    throw new Error('Not authorized, no token');
+  }
+};
+
+module.exports = { protect };
+```
+
+Apply the `protect` middleware to routes:
+
+```javascript
+const { protect } = require('./middleware/authMiddleware');
+
+app.use('/api/users/profile', protect);
+app.use('/api/posts', protect);
+```
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and submit a pull request for any improvements, bug fixes, or new features.
+
+## License
+
+This `README.md` file includes all the necessary information, formatted properly for easy reading and understanding.
