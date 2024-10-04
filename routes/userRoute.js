@@ -3,7 +3,7 @@ const {getAllUserController,
       getOneUserController,
       updateUserController,
       countUserController, 
-      uploadUserProfileImage} = require("../controller/userController");
+      uploadUserProfileImage} = require("../controller/UserController");
 const {verifyTokenAndAdmin, verfiyTokenAndOnlyUser, verfiyToken} = require("../middlewares/verifyToken");
 const validationObjectId = require("../middlewares/validateObjectID");
 const photoUpload = require("../middlewares/uploadProfilePhoto");

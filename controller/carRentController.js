@@ -12,7 +12,6 @@ const path = require("path");
 const fs = require("fs");
 const { carRentAggregation, carRentAdminAggregation } = require("../aggregation/carRentAggregation");
 
-const ObjectId = mongoose.Types.ObjectId; // Correctly reference ObjectId
 
 /**
  * @desc Create new Car rent

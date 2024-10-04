@@ -11,7 +11,7 @@ const fs = require("fs");
  * @desc Create new Promo
  * @Route /api/promo
  * @method POST
- * @access Private (only admin)
+ * @access private (only admin)
 */
 module.exports.createNewPromoController = asyncHandler(async (req, res) => {
     const { error } = validationCreatePromo(req.body);
@@ -48,7 +48,7 @@ module.exports.createNewPromoController = asyncHandler(async (req, res) => {
 /**
  * @desc Get All Promo
  * @Route /api/promo
- * @method Get
+ * @method GET
  * @access public
 */
 module.exports.getAllPromoCodeController = asyncHandler(async (req, res) => {
@@ -71,7 +71,7 @@ module.exports.getAllPromoCodeController = asyncHandler(async (req, res) => {
 /**
  * @desc Get One Promo
  * @Route /api/promo/:id
- * @method Get
+ * @method GET
  * @access public
 */
 module.exports.getOnePromoCodeController = asyncHandler(async (req, res) => {

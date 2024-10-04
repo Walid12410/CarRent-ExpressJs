@@ -138,7 +138,7 @@ function validationUpdateCarRent(obj) {
         fuelType: Joi.string().trim().min(2).max(100),
         transmission: Joi.string().trim().min(2).max(100),
         rentPrice: Joi.string().trim().min(1).max(20),
-        categoryId: Joi.string().hex().required()
+        categoryId: Joi.string().hex()
     });
     return schema.validate(obj);
 }

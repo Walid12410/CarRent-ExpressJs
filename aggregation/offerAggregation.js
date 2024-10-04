@@ -17,6 +17,11 @@ const getActiveOffersAggregation = (userCurrentTime) => [
         $unwind: { path: '$car', preserveNullAndEmptyArrays: true }
     },
     {
+        $match : {
+            'car.carStatus' : 'available'
+        }
+    },
+    {
         $lookup: {
             from: 'reviews',
             localField: 'car._id',

@@ -7,7 +7,7 @@ const {getAllCompaniesController,
     updateCompanyController,
     deleteCompanyController,
     CountAllCompaniesController
-} = require("../controller/companyController");
+} = require("../controller/CompanyController");
 const { AddCompanyImageController, RemovImageCompanyController } = require("../controller/CompanyImageController");
 const photoUpload = require("../middlewares/uploadProfilePhoto");
 
