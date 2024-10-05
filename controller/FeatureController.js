@@ -5,7 +5,7 @@ const {Feature,
 } = require("../model/Feature");
 const {CarRent} = require("../model/CarRent");
 const { getFeatureAggregation } = require("../aggregation/featureAggregation");
-
+const moment = require("moment");
 
 /**
  * @desc Create new feature
