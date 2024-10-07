@@ -1,9 +1,9 @@
 const asyncHandler = require("express-async-handler");
-const {Feature,
+const { Feature,
     validationCreateFeature,
     validationUpdateFeature
 } = require("../model/Feature");
-const {CarRent} = require("../model/CarRent");
+const { CarRent } = require("../model/CarRent");
 const { getFeatureAggregation } = require("../aggregation/featureAggregation");
 const moment = require("moment");
 
@@ -13,26 +13,26 @@ const moment = require("moment");
  * @method POST
  * @access private (only admin)
 */
-module.exports.createNewFeatureController = asyncHandler(async(req,res)=>{
-    const {error} = validationCreateFeature(req.body);
-    if(error){
-        return res.status(400).json({message : error.details[0].message});
+module.exports.createNewFeatureController = asyncHandler(async (req, res) => {
+    const { error } = validationCreateFeature(req.body);
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
     }
 
-    let carCheck = await CarRent.findOne({_id : req.params.id});
-    if(!carCheck){
-        return res.status(404).json({message : "Car not found"});
+    let carCheck = await CarRent.findOne({ _id: req.params.id });
+    if (!carCheck) {
+        return res.status(404).json({ message: "Car not found" });
     }
 
     let feature = new Feature({
-        carId : req.params.id,
-        startDate : req.body.startDate,
-        endDate : req.body.endDate
+        carId: req.params.id,
+        startDate: req.body.startDate,
+        endDate: req.body.endDate
     });
 
     await feature.save();
 
-    res.status(201).json({message : "Feature created successfully"});
+    res.status(201).json({ message: "Feature created successfully" });
 });
 
 
@@ -43,34 +43,41 @@ module.exports.createNewFeatureController = asyncHandler(async(req,res)=>{
  * @access public
 */
 module.exports.getAllFeatureController = asyncHandler(async (req, res) => {
-    const FEATURE_PER_PAGE = 5;
-    const { pageNumber, currentTime } = req.query;
+    const { pageNumber, currentTime, limitPage } = req.query;
     let feature;
 
-    if (!currentTime) {
-        return res.status(400).json({ message: "Current time is required" });
-    }
+    if (pageNumber && currentTime && limitPage) {
 
-    const dateFormat = "YYYY-MM-DDTHH:mm:ss";
-    const userCurrentTime = moment(currentTime, dateFormat, true).utc().toDate();
+        if (!currentTime) {
+            return res.status(400).json({ message: "Current time is required" });
+        }
 
-    if (!moment(userCurrentTime).isValid()) {
-        return res.status(400).json({ message: "Invalid date format" });
-    }
+        const dateFormat = "YYYY-MM-DDTHH:mm:ss";
+        const userCurrentTime = moment(currentTime, dateFormat, true).utc();
 
-    let aggregationPipeline = getFeatureAggregation(userCurrentTime);
+        if (!userCurrentTime.isValid()) {
+            return res.status(400).json({ message: "Invalid date format" });
+        }
 
-    if (pageNumber) {
-        feature = await Feature.aggregate([
-            ...aggregationPipeline,
-            { $skip: (pageNumber - 1) * FEATURE_PER_PAGE },
-            { $limit: FEATURE_PER_PAGE }
-        ]);
+        let aggregationPipeline = getFeatureAggregation(userCurrentTime.toDate());
+
+        const page = parseInt(pageNumber, 10);
+        const limit = parseInt(limitPage, 10);
+
+        if (isNaN(page) || page <= 0 || isNaN(limit) || limit <= 0) {
+            return res.status(400).json({ message: "Invalid pagination values" });
+        }
+        if (pageNumber) {
+            aggregationPipeline.push(
+                { $skip: (page - 1) * limit },
+                { $limit: limit }
+            );
+        }
+        feature = await Feature.aggregate(aggregationPipeline);
     } else {
-        feature = await Feature.aggregate([
-            ...aggregationPipeline
-        ]);
+        feature = await Feature.find();
     }
+
     res.status(200).json(feature);
 });
 
@@ -81,21 +88,21 @@ module.exports.getAllFeatureController = asyncHandler(async (req, res) => {
  * @method PUT
  * @access private (only admin)
 */
-module.exports.updateFeatureController = asyncHandler(async(req,res)=>{
+module.exports.updateFeatureController = asyncHandler(async (req, res) => {
     const { error } = validationUpdateFeature(req.body);
-    if(error){
-        return res.status(400).json({message : error.details[0].message });
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
     }
 
     const updateFeature = await Feature.findByIdAndUpdate(req.params.id, {
         $set: {
-            startDate : req.body.startDate,
-            endDate : req.body.endDate
+            startDate: req.body.startDate,
+            endDate: req.body.endDate
         }
-    },{new : true });
+    }, { new: true });
 
-    if(!updateFeature){
-        return res.status(404).json({message : "Feature not found"});
+    if (!updateFeature) {
+        return res.status(404).json({ message: "Feature not found" });
     }
 
     res.status(200).json(updateFeature);
@@ -108,13 +115,13 @@ module.exports.updateFeatureController = asyncHandler(async(req,res)=>{
  * @method DELETE
  * @access private(only admin)
 */
-module.exports.deleteFeatureController = asyncHandler(async(req,res)=>{
+module.exports.deleteFeatureController = asyncHandler(async (req, res) => {
     const featureFound = await Feature.findById(req.params.id);
-    if(!featureFound){
-        return res.status(404).json({message : "Feature not found"});
+    if (!featureFound) {
+        return res.status(404).json({ message: "Feature not found" });
     }
 
     await Feature.findByIdAndDelete(req.params.id);
 
-    res.status(200).json({message : "Feature deleted successfully"});
+    res.status(200).json({ message: "Feature deleted successfully" });
 });
