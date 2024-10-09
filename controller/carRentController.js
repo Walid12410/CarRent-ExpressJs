@@ -10,7 +10,7 @@ const CarImage = require("../model/CarRentImage");
 const { cloudinaryUploadImage, cloudinaryRemoveImage } = require("../utils/cloudinary");
 const path = require("path");
 const fs = require("fs");
-const { carRentAggregation, carRentAdminAggregation } = require("../aggregation/carRentAggregation");
+const { carRentAggregation, carRentAdminAggregation, carRentTopRatedAggregation } = require("../aggregation/carRentAggregation");
 
 
 /**
@@ -125,7 +125,7 @@ module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
 */
 module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
     const DEFAULT_CART_RENT_PER_PAGE = 3;
-    const { pageNumber, pageNumberCat, category, company, car_rent_per_page, isAdmin } = req.query;
+    const { pageNumber, pageNumberCat, category, company, car_rent_per_page, isAdmin , topRated } = req.query;
     const carsPerPage = car_rent_per_page ? parseInt(car_rent_per_page) : DEFAULT_CART_RENT_PER_PAGE;
     let cars;
 
@@ -170,6 +170,8 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
             cars = await CarRent.find({ companyId: company })
                 .sort({ createdAt: -1 })
                 .populate("category").populate("CarImage");
+        }else if ( topRated ){
+            cars = await CarRent.aggregate([...carRentTopRatedAggregation]); 
         } else {
             cars = await CarRent.find().sort({ createdAt: -1 })
                 .populate("category").populate("CarImage");

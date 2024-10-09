@@ -2,7 +2,12 @@ const getActiveOffersAggregation = (userCurrentTime) => [
     {
         $match: {
             startDate: { $lte: userCurrentTime },
-            endDate: { $gte: userCurrentTime }
+            endDate: { $gte: userCurrentTime },
+        }
+    },
+    {
+        $sort: {
+            createdAt: -1 
         }
     },
     {
