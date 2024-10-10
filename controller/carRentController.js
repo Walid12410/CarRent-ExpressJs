@@ -10,7 +10,11 @@ const CarImage = require("../model/CarRentImage");
 const { cloudinaryUploadImage, cloudinaryRemoveImage } = require("../utils/cloudinary");
 const path = require("path");
 const fs = require("fs");
-const { carRentAggregation, carRentAdminAggregation, carRentTopRatedAggregation } = require("../aggregation/carRentAggregation");
+const { carRentAggregation,
+    carRentAdminAggregation,
+    carRentTopRatedAggregation,
+    getOneCarRentAggregation
+} = require("../aggregation/carRentAggregation");
 
 
 /**
@@ -188,16 +192,18 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
  * @access public
 */
 module.exports.getOneCarRentController = asyncHandler(async (req, res) => {
-    const car = await CarRent.findById(req.params.id).populate({
-        path: "companyDetails",
-        populate: { path: "imageCompany", match: { isDefaultImage: true } }
-    }).populate("CarImage").populate("category");
-    if (car) {
-        res.status(200).json(car);
-    } else {
-        res.status(404).json({ message: "Car not found" });
+    try {
+        const car = await CarRent.aggregate([...getOneCarRentAggregation(req.params.id)]);
+        if (car.length > 0) {
+            res.status(200).json(car[0]); // Return the car object
+        } else {
+            res.status(404).json({ message: "Car not found" });
+        }
+    } catch (error) {
+        res.status(400).json({ message: `Invalid Car ID format ${error}` });
     }
 });
+
 
 
 /**
