@@ -65,7 +65,7 @@ module.exports.getAllOfferController = asyncHandler(async (req, res) => {
  * @access public 
 */
 module.exports.getActiveOffersController = asyncHandler(async (req, res) => {
-    const { currentTime , top } = req.query;
+    const { currentTime, page = 1, limit = 10 } = req.query;
 
     if (!currentTime) {
         return res.status(400).json({ message: "Current time is required" });
@@ -78,16 +78,25 @@ module.exports.getActiveOffersController = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "Invalid date format" });
     }
 
-    const limit = top === '3' ? 3 : 0;
+    const parsedLimit = parseInt(limit, 10);
+    const parsedPage = parseInt(page, 10);
+
+    // Calculate how many records to skip based on the current page
+    const skip = (parsedPage - 1) * parsedLimit;
+
+    // Build the aggregation pipeline
     let aggregationPipeline = getActiveOffersAggregation(userCurrentTime);
-    if (limit > 0) {
-        aggregationPipeline.push({ $limit: limit });
-    }
+    
+    // Add limit and skip for pagination
+    aggregationPipeline.push({ $skip: skip });
+    aggregationPipeline.push({ $limit: parsedLimit });
+
+    // Get the active offers with pagination
     const activeOffers = await Offer.aggregate(aggregationPipeline);
 
+    // Send paginated response
     res.status(200).json(activeOffers);
 });
-
 
 /**
  * @desc get One offer

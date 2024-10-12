@@ -6,6 +6,7 @@ const { Companies,
 const { CompanyImage } = require("../model/CompanyImage");
 const { cloudinaryRemoveImage } = require("../utils/cloudinary");
 const companyAggregation = require("../aggregation/companyAggregation");
+const mongoose = require("mongoose");
 
 /**
  * @desc Create new company
@@ -67,9 +68,12 @@ module.exports.getAllCompaniesController = asyncHandler(async (req, res) => {
  * @access Public
 */
 module.exports.getOneCompanyController = asyncHandler(async (req, res) => {
-    const companies = await Companies.findById(req.params.id);
-    if (companies) {
-        res.status(200).json(companies);
+    const company = await Companies.aggregate([
+        ...companyAggregation,
+        {$match : { _id :new mongoose.Types.ObjectId(req.params.id) }}
+    ]);
+    if (company.length > 0) {
+        res.status(200).json(company[0]);
     } else {
         res.status(404).json({ message: "Company Not Found" });
     }

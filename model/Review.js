@@ -22,7 +22,7 @@ const ReviewSchema = new mongoose.Schema({
     },
     reviewText : {
         type: String, trim: true, 
-        required : true , minLength : 2, maxLength : 100
+        required : true 
     }
 }, {
     timestamps : true,
@@ -37,7 +37,7 @@ const Review = mongoose.model("Review", ReviewSchema);
 function validationCreateReview(obj){
     const Schema = Joi.object({
         rate : Joi.number().min(1).max(5).required(),
-        reviewText : Joi.string().trim().min(2).max(100).required()
+        reviewText : Joi.string().trim().required()
     });
     return Schema.validate(obj);
 }
@@ -46,7 +46,7 @@ function validationCreateReview(obj){
 function validationUpdateReview(obj){
     const Schema = Joi.object({
         rate : Joi.number().min(1).max(5),
-        reviewText : Joi.string().trim().min(2).max(100)
+        reviewText : Joi.string().trim()
     });
     return Schema.validate(obj);
 }
