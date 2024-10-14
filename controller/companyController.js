@@ -56,7 +56,9 @@ module.exports.getAllCompaniesController = asyncHandler(async (req, res) => {
             {$sort: { createdAt : -1 }}
         ]);
     }else{
-        companies = await Companies.find().populate("imageCompany");
+        companies = await Companies.aggregate([
+            ...companyAggregation
+        ]);
     }
     res.status(200).json(companies);
 });
