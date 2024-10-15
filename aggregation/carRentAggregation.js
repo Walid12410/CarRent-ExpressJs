@@ -209,19 +209,31 @@ const carRentTopRatedAggregation = [
     {
         $sort: {
             averageRating: -1, // Sort by averageRating in descending order to get top-rated cars
-            createdAt: -1 // Sort by creation date in descending order as a tie-breaker
+            createdAt: -1 
         }
     },
     {
         $project: {
-            CarImage: 1,           // Include CarImage
-            reviewCount: 1,        // Include reviewCount
-            averageRating: 1       // Include averageRating
+            CarImage: 1,          
+            reviewCount: 1,       
+            averageRating: 1,
+            carMake : 1,
+            year: 1,
+            color : 1,
+            carType : 1,
+            carStatus : 1,
+            companyId : 1,
+            licensePlate : 1,
+            vin : 1,
+            mileage : 1,
+            fuelType : 1,
+            transmission : 1,
+            rentPrice : 1,
+            categoryId : 1,
+            createdAt: 1,
+            updatedAt: 1,
         }
     },
-    {
-        $limit: 10 // Optional: limit the number of top-rated cars to 10, adjust as needed
-    }
 ];
 
 

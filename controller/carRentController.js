@@ -26,31 +26,31 @@ const { carRentAggregation,
 module.exports.createCarRentController = asyncHandler(async (req, res) => {
     const { error } = validationCreateCarRent(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
-  
+
     const invalidIdCheck = id => !id || !mongoose.Types.ObjectId.isValid(id);
     if (invalidIdCheck(req.body.companyId) || invalidIdCheck(req.body.categoryId)) {
-      return res.status(400).json({ message: "Invalid Object ID" });
+        return res.status(400).json({ message: "Invalid Object ID" });
     }
-  
+
     const { companyId, categoryId } = req.body;
-  
+
     const [companyFound, categoryFound] = await Promise.all([
-      Companies.findOne({ _id: companyId }),
-      Category.findOne({ _id: categoryId }),
+        Companies.findOne({ _id: companyId }),
+        Category.findOne({ _id: categoryId }),
     ]);
-  
+
     if (!companyFound) return res.status(400).json({ message: "Company not found" });
     if (!categoryFound) return res.status(400).json({ message: "Category not found" });
-  
+
     const newCarRent = new CarRent({ ...req.body });
     await newCarRent.save();
-  
+
     res.status(201).json({ message: "New car rent has been created successfully" });
-  });
+});
 
 /**
  * @desc Get All Car
- * @Route /api/car-rent/upload-images
+ * @Route /api/car-rent/car-image/:id
  * @method POST
  * @access private (only Employee)
 */
@@ -107,9 +107,11 @@ module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
 */
 module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
     const DEFAULT_CART_RENT_PER_PAGE = 3;
-    const { pageNumber, pageNumberCat, category, company, car_rent_per_page, isAdmin, topRated, companyPageNumber, companyLimitPage } = req.query;
+    const { pageNumber, pageNumberCat, category, company, car_rent_per_page, isAdmin, topRated, companyPageNumber, companyLimitPage, TopRatedPageNumber, TopRatedLimitPage } = req.query;
     const carsPerPage = car_rent_per_page ? parseInt(car_rent_per_page) : DEFAULT_CART_RENT_PER_PAGE;
     const companyPerPage = companyLimitPage ? parseInt(companyLimitPage) : DEFAULT_CART_RENT_PER_PAGE;
+    const topRatedPerPage = TopRatedLimitPage ? parseInt(TopRatedLimitPage) : DEFAULT_CART_RENT_PER_PAGE;
+
     let cars;
 
     if (isAdmin) {
@@ -164,7 +166,15 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
                 ]);
             }
         } else if (topRated) {
-            cars = await CarRent.aggregate([...carRentTopRatedAggregation]);
+            if (TopRatedPageNumber) {
+                cars = await CarRent.aggregate([
+                    ...carRentTopRatedAggregation,
+                    { $skip: (TopRatedPageNumber - 1) * topRatedPerPage },
+                    { $limit: topRatedPerPage }
+                ]);
+            } else {
+                cars = await CarRent.aggregate([...carRentTopRatedAggregation]);
+            }
         } else {
             cars = await CarRent.find().sort({ createdAt: -1 })
                 .populate("category").populate("CarImage");
