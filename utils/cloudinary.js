@@ -7,7 +7,7 @@ clouidnary.config({
 });
 
 // Cloudinary Upload Image
-const cloudinaryUploadImage = async(fileToUpload) =>{
+const cloudinaryUploadImage = async(fileToUpload) => {
     try {
         const data = await clouidnary.uploader.upload(fileToUpload,{
             resourse_type: 'auto',

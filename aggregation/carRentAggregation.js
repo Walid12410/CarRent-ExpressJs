@@ -1,6 +1,5 @@
 const ObjectId = require('mongodb').ObjectId;
 
-
 const carRentAggregation = [
     {
         $match: {
@@ -171,8 +170,6 @@ const getOneCarRentAggregation = (carId) => [
     }
 ];
 
-
-
 const carRentTopRatedAggregation = [
     {
         $match: {
@@ -236,7 +233,6 @@ const carRentTopRatedAggregation = [
     },
 ];
 
-
 const carRentAdminAggregation = [
     {
         $lookup: {
@@ -271,7 +267,6 @@ const carRentAdminAggregation = [
         },
     }
 ];
-
 
 module.exports = {
     carRentAggregation,
