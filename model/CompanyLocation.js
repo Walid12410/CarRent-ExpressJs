@@ -2,10 +2,10 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 
-const UserLocationSchema = new Schema({
-    userId: {
+const CompanyLocationSchema = new Schema({
+    companyId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', required: true
+        ref: 'Companies', required: true
     },
     latitude: {
         type: Number, required: true
@@ -27,11 +27,11 @@ const UserLocationSchema = new Schema({
 });
 
 
-// Create the user location model using schema
-const UserLocation = mongoose.model('UserLocation', UserLocationSchema);
+// Create the company location model using schema
+const CompanyLocation = mongoose.model('CompanyLocation', CompanyLocationSchema);
 
 // validation create location
-function validationCreateLocation(obj){
+function validationCreateCompayLocation(obj){
     const schema = Joi.object({
         latitude : Joi.number().required(),
         longitude : Joi.number().required(),
@@ -43,7 +43,7 @@ function validationCreateLocation(obj){
 }
 
 // validation update location
-function validationUpdateLocation(obj){
+function validationUpdateCompanyLocation(obj){
     const schema = Joi.object({
         latitude : Joi.number(),
         longitude : Joi.number(),
@@ -56,7 +56,7 @@ function validationUpdateLocation(obj){
 
 
 module.exports = {
-    UserLocation,
-    validationCreateLocation,
-    validationUpdateLocation
+    CompanyLocation,
+    validationCreateCompayLocation,
+    validationUpdateCompanyLocation
 }

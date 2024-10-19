@@ -10,14 +10,14 @@ const validationObjectId = require("../middlewares/validateObjectID");
 
 
 // api/feature/:id
-router.route("/:id") 
-.post(validationObjectId,verifyTokenAndAdmin, createNewFeatureController)
-.put(validationObjectId, verifyTokenAndAdmin, updateFeatureController)
-.delete(validationObjectId,verifyTokenAndAdmin , deleteFeatureController);
+router.route("/:id")
+    .post(validationObjectId, verifyTokenAndAdmin, createNewFeatureController)
+    .put(validationObjectId, verifyTokenAndAdmin, updateFeatureController)
+    .delete(validationObjectId, verifyTokenAndAdmin, deleteFeatureController);
 
 // api/feature/
 router.route("/")
-.get(getAllFeatureController);
+    .get(getAllFeatureController);
 
 
 module.exports = router;

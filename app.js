@@ -38,6 +38,8 @@ app.use("/api/review", require("./routes/reviewRoute"));
 app.use("/api/offer", require("./routes/offerRoute"));
 app.use("/api/employee", require("./routes/employeeRoute"));
 app.use("/api/feature", require("./routes/featureRoute"));
+app.use("/api/company-location", require("./routes/companyLocationRoute"));
+app.use("/api/user-location", require("./routes/userLocationRoute"));
 app.use("/api/fakeData",require("./fakeData"));
 
 
