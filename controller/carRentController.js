@@ -42,6 +42,11 @@ module.exports.createCarRentController = asyncHandler(async (req, res) => {
     if (!companyFound) return res.status(400).json({ message: "Company not found" });
     if (!categoryFound) return res.status(400).json({ message: "Category not found" });
 
+    if (req.body.carMake && !mongoose.Types.ObjectId.isValid(req.body.carMake)) {
+        return res.status(400).json({ message: "Invalid Object ID for carMake" });
+    }
+
+
     const newCarRent = new CarRent({ ...req.body });
     await newCarRent.save();
 
@@ -228,16 +233,18 @@ module.exports.updateOneCarRentController = asyncHandler(async (req, res) => {
         }
     }
 
+    if (req.body.carMakeId && !mongoose.Types.ObjectId.isValid(req.body.carMakeId)) {
+        return res.status(400).json({ message: "Invalid Object ID for carMake" });
+    }
+
     const updateCarRent = await CarRent.findByIdAndUpdate(req.params.id, {
         $set: {
-            carMake: req.body.carMake,
+            carMake: req.body.carMakeId,
             carModel: req.body.carModel,
             year: req.body.year,
             color: req.body.color,
-            carType: req.body.carType,
             carStatus: req.body.carStatus,
             licensePlate: req.body.licensePlate,
-            vin: req.body.vin,
             mileage: req.body.mileage,
             fuelType: req.body.fuelType,
             transmission: req.body.transmission,

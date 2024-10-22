@@ -2,7 +2,7 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 
-const CompanyLocationSchema = new Schema({
+const CompanyLocationSchema = new mongoose.Schema({
     companyId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Companies', required: true

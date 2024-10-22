@@ -28,6 +28,14 @@ const getActiveOffersAggregation = (userCurrentTime) => [
     },
     {
         $lookup: {
+            from: 'carMakes',
+            localField: 'car.carMakeId',
+            foreignField: '_id',
+            as: 'carMake'
+        }
+    },
+    {
+        $lookup: {
             from: 'reviews',
             localField: 'car._id',
             foreignField: 'carId',

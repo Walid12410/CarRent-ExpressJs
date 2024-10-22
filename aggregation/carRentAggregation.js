@@ -23,6 +23,14 @@ const carRentAggregation = [
         }
     },
     {
+        $lookup: {
+            from: "carMakes",
+            localField: "_id",
+            foreignField: "carMakeId",
+            as: "carMake"
+        }
+    },
+    {
         $sort: {
             createdAt: -1
         }
@@ -52,6 +60,14 @@ const getOneCarRentAggregation = (carId) => [
             localField: "_id",
             foreignField: "carId",
             as: "reviews"
+        }
+    },
+    {
+        $lookup: {
+            from: "carMakes",
+            localField: "_id",
+            foreignField: "carMakeId",
+            as: "carMake"
         }
     },
     {
@@ -186,6 +202,14 @@ const carRentTopRatedAggregation = [
     },
     {
         $lookup: {
+            from: "carMakes",
+            localField: "_id",
+            foreignField: "carMakeId",
+            as: "carMake"
+        }
+    },
+    {
+        $lookup: {
             from: "carimages",
             localField: "_id",
             foreignField: "carRentID",
@@ -248,6 +272,14 @@ const carRentAdminAggregation = [
             localField: "_id",
             foreignField: "carRentID",
             as: "CarImage"
+        }
+    },
+    {
+        $lookup: {
+            from: "carMakes",
+            localField: "_id",
+            foreignField: "carMakeId",
+            as: "carMake"
         }
     },
     {
