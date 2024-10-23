@@ -46,7 +46,6 @@ module.exports.createCarRentController = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "Invalid Object ID for carMake" });
     }
 
-
     const newCarRent = new CarRent({ ...req.body });
     await newCarRent.save();
 

@@ -40,6 +40,10 @@ const promoSchema = new mongoose.Schema({
         type: String, required : true,
         minLength : 2, trim : true
     },
+    companyId : {
+        type: mongoose.Schema.Types.ObjectId,
+        required : true, ref: "Companies"
+    },
     promoImage : {
         url: {
             type: String,
@@ -70,6 +74,7 @@ function validationCreatePromo(obj) {
         startDate: Joi.date().iso().required(),
         endDate: Joi.date().iso().greater(Joi.ref('startDate')).required(),
         usageLimit: Joi.number().integer().min(1),
+        companyId: Joi.required(),
         usedCount: Joi.number().integer().min(0),
         promoTitle : Joi.string().trim().min(2).max(100).required(),
         promoDescription : Joi.string().trim().min(2).required()

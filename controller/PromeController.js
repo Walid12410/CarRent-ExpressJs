@@ -11,9 +11,9 @@ const moment = require("moment");
 
 /**
  * @desc Create new Promo
- * @Route /api/promo
+ * @Route /api/promo/:id
  * @method POST
- * @access private (only admin)
+ * @access private (only employee)
 */
 module.exports.createNewPromoController = asyncHandler(async (req, res) => {
     if (!req.file) {
@@ -48,6 +48,7 @@ module.exports.createNewPromoController = asyncHandler(async (req, res) => {
             usageLimit: req.body.usageLimit,
             usedCount: req.body.usedCount,
             promoTitle: req.body.promoTitle,
+            companyId: req.body.companyId,
             promoDescription: req.body.promoDescription,
             promoImage: {
                 url: result.secure_url,

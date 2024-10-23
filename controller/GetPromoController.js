@@ -13,13 +13,10 @@ const { GetPromo } = require("../model/GetPromo");
 */
 module.exports.getPromoCodeController = asyncHandler(async (req, res) => {
 
-    const { promoId, userId, claimAt } = req.body;
+    const { promoId, claimAt } = req.body;
 
     if (!mongoose.isValidObjectId(promoId)) {
         return res.status(400).json({ message: "Invalid promotion ID" });
-    }
-    if (!mongoose.isValidObjectId(userId)) {
-        return res.status(400).json({ message: "Invalid user ID" });
     }
 
     const promo = await Promo.findById(promoId);
@@ -31,13 +28,13 @@ module.exports.getPromoCodeController = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "Promotion is not active or has expired" });
     }
 
-    const existingClaim = await GetPromo.findOne({ userId: userId, promoId: promoId });
+    const existingClaim = await GetPromo.findOne({ userId: req.user.id, promoId: promoId });
     if (existingClaim) {
         return res.status(400).json({ message: "You have already claimed this promotion" });
     }
 
     const newClaim = new GetPromo({
-        userId,
+        userId: req.user.id,
         promoId: promo._id,
         claimedAt: claimAt,
         startDate: promo.startDate,
@@ -57,18 +54,14 @@ module.exports.getPromoCodeController = asyncHandler(async (req, res) => {
  * @access private (only user)
 */
 module.exports.usePromoCodeController = asyncHandler(async (req, res) => {
-    const { userId, promoCode, currentTime } = req.body;
-
-    if (!mongoose.isValidObjectId(userId)) {
-        return res.status(400).json({ message: "Invalid user ID" });
-    }
+    const { promoCode, currentTime } = req.body;
 
     const promo = await Promo.findOne({ promoCode });
     if (!promo) {
         return res.status(404).send({ message: 'Promotion not found' });
     }
 
-    const getPromo = await GetPromo.findOne({ userId, promoId: promo._id });
+    const getPromo = await GetPromo.findOne({ userId: req.user.id, promoId: promo._id });
     if (!getPromo) {
         return res.status(400).json({ message: "You have not claimed this promotion" });
     }
@@ -98,11 +91,8 @@ module.exports.usePromoCodeController = asyncHandler(async (req, res) => {
  * @access private (only user)
 */
 module.exports.checkPromoCodeController = asyncHandler(async (req, res) => {
-    const { userId, promoCode, currentDate, companyID } = req.body;
+    const { promoCode, currentDate, companyID } = req.body;
 
-    if (!mongoose.isValidObjectId(userId)) {
-        return res.status(400).json({ message: "Invalid user ID" });
-    }
 
     if (!mongoose.isValidObjectId(companyID)) {
         return res.status(400).json({ message: "Invalid user ID" });
@@ -113,11 +103,11 @@ module.exports.checkPromoCodeController = asyncHandler(async (req, res) => {
         return res.status(404).send({ message: 'Promotion not found' });
     }
 
-    if (promo.companyID != companyID) {
+    if (promo.companyId != companyID) {
         return res.status(404).send({ message: 'This promition is not for this company car' });
     }
 
-    const getPromo = await GetPromo.findOne({ userId, promoId: promo._id }).populate('promoDetails');
+    const getPromo = await GetPromo.findOne({ userId: req.user.id, promoId: promo._id }).populate('promoDetails');
     if (!getPromo) {
         return res.status(400).json({ message: "You have not claimed this promotion" });
     }
