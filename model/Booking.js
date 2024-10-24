@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Joi = require("joi");
 
 
 const BookingSchema = new mongoose.Schema({
@@ -8,10 +9,10 @@ const BookingSchema = new mongoose.Schema({
     },
     carId : {
         type: mongoose.Schema.Types.ObjectId, required : true,
-        ref : "Companies"
+        ref : "CarRent"
     },
     daysRent : {
-        tpye : Number , required: true,
+        type : Number , required: true,
         minLength: 1 , maxLength: 100,
         trim: true
     },
@@ -32,16 +33,26 @@ const BookingSchema = new mongoose.Schema({
 });
 
 
+BookingSchema.virtual("car",{
+    ref : "CarRent",
+    localField : "carId",
+    foreignField : "_id"
+});
+
+BookingSchema.virtual("user",{
+    ref : "User",
+    localField : "userId",
+    foreignField : "_id"
+});
+
 const Booking = mongoose.model('Booking',BookingSchema);
 
 
 // Validation Create booing
 function validationCreateBooking(obj) {
     const schema = Joi.object({
-        carId: Joi.required(),
-        companyId: Joi.required(),
         daysRent: Joi.number().min(1).max(100).required(),
-        totalRentPrice: Joi.date().iso().required(),
+        totalRentPrice: Joi.string().required(),
         startDate: Joi.date().iso().required(),
         endDate: Joi.date().iso().greater(Joi.ref('startDate')).required(),
     });
@@ -53,7 +64,7 @@ function validationCreateBooking(obj) {
 function validationUpdateBooking(obj) {
     const schema = Joi.object({
         daysRent: Joi.number().min(1).max(100),
-        totalRentPrice: Joi.date().iso(),
+        totalRentPrice: Joi.string(),
         startDate: Joi.date().iso(),
         endDate: Joi.date().iso().greater(Joi.ref('startDate')),
     });

@@ -41,6 +41,8 @@ app.use("/api/employee", require("./routes/employeeRoute"));
 app.use("/api/feature", require("./routes/featureRoute"));
 app.use("/api/company-location", require("./routes/companyLocationRoute"));
 app.use("/api/user-location", require("./routes/userLocationRoute"));
+app.use("/api/booking", require("./routes/bookingRoute"));
+app.use("/api/device-token", require("./routes/deviceTokenRoute"));
 app.use("/api/fakeData",require("./fakeData"));
 
 

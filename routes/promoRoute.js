@@ -24,16 +24,13 @@ router.route("/:id")
     .post(validationObjectId, verifyEmployeeToken, photoUpload.single("image"), createNewPromoController);
 
 // api/promo/claim
-router.route("/claim")
-    .post(verfiyToken, getPromoCodeController);
+router.route("/claim/:id").post(validationObjectId, verfiyToken, getPromoCodeController);
 
 // api/promo/use
-router.route("/use")
-    .post(verfiyToken, usePromoCodeController);
+router.route("/use").post(verfiyToken, usePromoCodeController);
 
 //api/promo/user-promotion
-router.route("/check-user-promotion")
-    .post(verfiyToken, checkPromoCodeController);
+router.route("/check-user-promotion/:id").post(verfiyToken, checkPromoCodeController);
 
 //api/promo/upload-image/:id
 router.route("/upload-image/:id")

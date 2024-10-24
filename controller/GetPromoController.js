@@ -7,17 +7,13 @@ const { GetPromo } = require("../model/GetPromo");
 
 /**
  * @desc Get Promo Code
- * @Route /api/promo/claim
+ * @Route /api/promo/claim/:id
  * @method POST
  * @access private (only user)
 */
 module.exports.getPromoCodeController = asyncHandler(async (req, res) => {
-
-    const { promoId, claimAt } = req.body;
-
-    if (!mongoose.isValidObjectId(promoId)) {
-        return res.status(400).json({ message: "Invalid promotion ID" });
-    }
+    const { claimAt } = req.body;
+    const promoId = req.params.id;
 
     const promo = await Promo.findById(promoId);
     if (!promo) {
@@ -86,17 +82,13 @@ module.exports.usePromoCodeController = asyncHandler(async (req, res) => {
 
 /**
  * @desc Check Promo Code
- * @Route /api/promo/check-user-promotion
+ * @Route /api/promo/check-user-promotion/:id
  * @method GET
  * @access private (only user)
 */
 module.exports.checkPromoCodeController = asyncHandler(async (req, res) => {
-    const { promoCode, currentDate, companyID } = req.body;
-
-
-    if (!mongoose.isValidObjectId(companyID)) {
-        return res.status(400).json({ message: "Invalid user ID" });
-    }
+    const { promoCode, currentDate } = req.body;
+    const companyID = req.params.id;
 
     const promo = await Promo.findOne({ promoCode });
     if (!promo) {
