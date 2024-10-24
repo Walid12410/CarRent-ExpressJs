@@ -11,7 +11,7 @@ router.post('/fake', async (req, res) => {
 
         const users = [];
 
-        for (let i = 0; i < 150; i++) {
+        for (let i = 0; i < 100; i++) {
             users.push({
                 firstName: faker.person.firstName(),
                 lastName: faker.person.lastName(),
@@ -32,19 +32,18 @@ router.post('/fake', async (req, res) => {
 // Route to generate fake car makes
 router.post('/fake-car-makes', async (req, res) => {
     try {
-        const carMakes = [];
-
-        for (let i = 0; i < 150; i++) {
-            carMakes.push({
-                carMakeName: faker.vehicle.manufacturer() // Generate a fake car make name
-            });
+        const carMakes = new Set(); // Use a Set to store unique car make names
+        while (carMakes.size < 20) { // Continue until we have 50 unique makes
+            const carMakeName = faker.vehicle.manufacturer(); // Generate a fake car make name
+            carMakes.add(carMakeName); // Add the name to the Set (duplicates will be ignored)
         }
-
-        await CarMake.insertMany(carMakes);
-        res.status(201).json({ message: 'Fake car makes inserted successfully', count: carMakes.length });
+        const carMakesArray = Array.from(carMakes).map(make => ({ carMakeName: make }));
+        await CarMake.insertMany(carMakesArray);
+        res.status(201).json({ message: 'Fake car makes inserted successfully', count: carMakesArray.length });
     } catch (err) {
         console.error('Error inserting fake car makes:', err);
         res.status(500).json({ message: 'Error inserting fake car makes', error: err.message || err });
+    
     }
 });
 

@@ -89,5 +89,5 @@ module.exports.updateCategoryController = asyncHandler(async(req,res)=>{
         return res.status(404).json({message : "Category not found"});
     }
 
-    res.status(201).json(updateCategory);
+    res.status(200).json(updateCategory);
 });

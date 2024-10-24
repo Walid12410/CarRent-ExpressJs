@@ -30,7 +30,6 @@ module.exports.deviceTokenController = asyncHandler(async(req,res)=>{
             playerId,
             userId
         });
-
         await newDeviceToken.save();
         return res.status(201).json({message : "New device token created."});
     }
