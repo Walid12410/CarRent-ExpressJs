@@ -18,21 +18,6 @@ const CompaniesSchema = new mongoose.Schema({
         trim: true,  minLength :6 ,
         maxLength : 20
     },
-    companyAddress : {
-        type: String, required: true,
-        trim: true, minLength : 2,
-        maxLength: 100,
-    },
-    companyCity: {
-        type: String, required: true,
-        trim: true, minLength : 2,
-        maxLength: 100,
-    },
-    companyState: {
-        type: String, required: true,
-        trim: true, minLength : 2,
-        maxLength: 100,
-    },
 },{
     timestamps: true,
     toJSON : {virtuals : true},
@@ -54,9 +39,6 @@ function validationCompainesCreate(obj){
         companyName : Joi.string().trim().min(2).max(100).required(),
         companyEmail :  Joi.string().trim().min(5).max(100).required(),
         companyPhoneNumber: Joi.string().min(6).max(20).trim().required(),
-        companyAddress : Joi.string().trim().min(2).max(100).required(),
-        companyCity: Joi.string().trim().min(2).max(100).required(),
-        companyState: Joi.string().trim().min(2).max(100).required(),
     });
     return schema.validate(obj);
 }
@@ -67,9 +49,6 @@ function validationComapainesUpdate(obj){
         companyName : Joi.string().trim().min(2).max(100),
         companyEmail :  Joi.string().trim().min(5).max(100).email(),
         companyPhoneNumber: Joi.string().min(6).max(20).trim(),
-        companyAddress : Joi.string().trim().min(2).max(100),
-        companyCity: Joi.string().trim().min(2).max(100),
-        companyState: Joi.string().trim().min(2).max(100),
     });
     return schema.validate(obj);
 }

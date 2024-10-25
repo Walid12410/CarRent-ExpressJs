@@ -73,6 +73,7 @@ module.exports.createNewPromoController = asyncHandler(async (req, res) => {
     }
 });
 
+
 /**
  * @desc Get All Promo
  * @Route /api/promo
