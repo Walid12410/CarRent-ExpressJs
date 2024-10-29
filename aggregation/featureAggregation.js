@@ -18,7 +18,21 @@ const getFeatureAggregation = (useCurrentTime) => [
     },
     {
         $match : {
-            'car.carStatus' : 'available'
+            'car.carStatus' : 'Available'
+        }
+    },
+    {
+        $lookup: {
+            from: "carmakes",
+            localField: "car.carMakeId",
+            foreignField: "_id",
+            as: "CarMake"
+        }
+    },
+    {
+        $unwind: {
+            path: "$CarMake",
+            preserveNullAndEmptyArrays: true
         }
     },
     {
@@ -47,7 +61,8 @@ const getFeatureAggregation = (useCurrentTime) => [
                     else: null
                 }
             },
-            'car.CarImage' : '$CarImage'
+            'car.CarImage' : '$CarImage',
+            'car.CarMake' : '$CarMake'
         }
     },
     {

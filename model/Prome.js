@@ -9,9 +9,6 @@ const promoSchema = new mongoose.Schema({
         required: true, minLength: 2,
         maxLength: 10
     },
-    discountAmount: {
-        type: Number, default: 0
-    },
     discountPercentage: {
         type: Number, default: 0
     },

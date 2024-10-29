@@ -3,7 +3,7 @@ const ObjectId = require('mongodb').ObjectId;
 const carRentAggregation = [
     {
         $match: {
-            carStatus: "available"
+            carStatus: "Available"
         }
     },
     {
@@ -24,10 +24,16 @@ const carRentAggregation = [
     },
     {
         $lookup: {
-            from: "carMakes",
-            localField: "_id",
-            foreignField: "carMakeId",
-            as: "carMake"
+            from: "carmakes",
+            localField: "carMakeId",
+            foreignField: "_id",
+            as: "CarMake"
+        }
+    },
+    {
+        $unwind: {
+            path: "$CarMake",
+            preserveNullAndEmptyArrays: true
         }
     },
     {
@@ -64,10 +70,16 @@ const getOneCarRentAggregation = (carId) => [
     },
     {
         $lookup: {
-            from: "carMakes",
-            localField: "_id",
-            foreignField: "carMakeId",
-            as: "carMake"
+            from: "carmakes",
+            localField: "carMakeId",
+            foreignField: "_id",
+            as: "CarMake"
+        }
+    },
+    {
+        $unwind: {
+            path: "$CarMake",
+            preserveNullAndEmptyArrays: true
         }
     },
     {
@@ -78,7 +90,7 @@ const getOneCarRentAggregation = (carId) => [
             foreignField: "_id",
             as: "reviewUsers",
             pipeline: [
-                { $project: { password: 0  } } // Exclude password field
+                { $project: { password: 0 } } // Exclude password field
             ],
         }
     },
@@ -139,6 +151,21 @@ const getOneCarRentAggregation = (carId) => [
         }
     },
     {
+        $lookup: {
+            from: "categories",
+            localField: "categoryId",
+            foreignField: "_id",
+            as: "Category"
+        }
+    },
+    {
+        $unwind: {
+            path: "$Category",
+            preserveNullAndEmptyArrays: true
+        }
+    },
+
+    {
         $unwind: {
             path: '$companyDetails',
             preserveNullAndEmptyArrays: true
@@ -163,25 +190,25 @@ const getOneCarRentAggregation = (carId) => [
         $project: {
             reviews: 1, // Show top 2 reviews with user details
             CarImage: 1,
+            carMakeId: 1,
             companyDetails: 1,
             reviewCount: 1,
             averageRating: 1,
-            carMake: 1,
-            carModel : 1,
+            carModel: 1,
             year: 1,
-            color : 1 ,
-            carType : 1,
-            carStatus : 1 ,
-            companyId : 1 ,
-            licensePlate : 1,
-            vin : 1,
-            mileage : 1,
-            fuelType : 1, 
-            transmission : 1 ,
-            rentPrice : 1 ,
+            color: 1,
+            carStatus: 1,
+            companyId: 1,
+            licensePlate: 1,
+            mileage: 1,
+            fuelType: 1,
+            transmission: 1,
+            rentPrice: 1,
             createdAt: 1,
-            categoryId : 1 ,
-            updatedAt: 1 ,
+            categoryId: 1,
+            Category: 1,
+            CarMake: 1,
+            updatedAt: 1,
         }
     }
 ];
@@ -202,10 +229,10 @@ const carRentTopRatedAggregation = [
     },
     {
         $lookup: {
-            from: "carMakes",
-            localField: "_id",
-            foreignField: "carMakeId",
-            as: "carMake"
+            from: "carmakes",
+            localField: "carMakeId",
+            foreignField: "_id",
+            as: "CarMake"
         }
     },
     {
@@ -230,27 +257,27 @@ const carRentTopRatedAggregation = [
     {
         $sort: {
             averageRating: -1, // Sort by averageRating in descending order to get top-rated cars
-            createdAt: -1 
+            createdAt: -1
         }
     },
     {
         $project: {
-            CarImage: 1,          
-            reviewCount: 1,       
+            CarImage: 1,
+            reviewCount: 1,
             averageRating: 1,
-            carMake : 1,
+            carMake: 1,
             year: 1,
-            color : 1,
-            carType : 1,
-            carStatus : 1,
-            companyId : 1,
-            licensePlate : 1,
-            vin : 1,
-            mileage : 1,
-            fuelType : 1,
-            transmission : 1,
-            rentPrice : 1,
-            categoryId : 1,
+            color: 1,
+            carType: 1,
+            carStatus: 1,
+            companyId: 1,
+            licensePlate: 1,
+            vin: 1,
+            mileage: 1,
+            fuelType: 1,
+            transmission: 1,
+            rentPrice: 1,
+            categoryId: 1,
             createdAt: 1,
             updatedAt: 1,
         }
@@ -276,13 +303,12 @@ const carRentAdminAggregation = [
     },
     {
         $lookup: {
-            from: "carMakes",
-            localField: "_id",
-            foreignField: "carMakeId",
-            as: "carMake"
+            from: "carmakes",
+            localField: "carMakeId",
+            foreignField: "_id",
+            as: "CarMake"
         }
-    },
-    {
+    }, {
         $sort: {
             createdAt: -1
         }

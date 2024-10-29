@@ -111,10 +111,14 @@ module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
 */
 module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
     const DEFAULT_CART_RENT_PER_PAGE = 3;
-    const { pageNumber, pageNumberCat, category, company, car_rent_per_page, isAdmin, topRated, companyPageNumber, companyLimitPage, TopRatedPageNumber, TopRatedLimitPage } = req.query;
+    const { pageNumber, pageNumberCat, category, company, car_rent_per_page,
+        isAdmin, topRated, companyPageNumber, companyLimitPage, TopRatedPageNumber,
+        TopRatedLimitPage, categoryLimitPage
+    } = req.query;
     const carsPerPage = car_rent_per_page ? parseInt(car_rent_per_page) : DEFAULT_CART_RENT_PER_PAGE;
     const companyPerPage = companyLimitPage ? parseInt(companyLimitPage) : DEFAULT_CART_RENT_PER_PAGE;
     const topRatedPerPage = TopRatedLimitPage ? parseInt(TopRatedLimitPage) : DEFAULT_CART_RENT_PER_PAGE;
+    const categoryPerPage = categoryLimitPage ? parseInt(categoryLimitPage) : DEFAULT_CART_RENT_PER_PAGE;
 
     let cars;
 
@@ -141,14 +145,14 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
             }
             if (pageNumberCat) {
                 cars = await CarRent.aggregate([
-                    { $match: { categoryId: new mongoose.Types.ObjectId(category), carStatus: "available" } },
+                    { $match: { categoryId: new mongoose.Types.ObjectId(category), carStatus: "Available" } },
                     ...carRentAggregation,
-                    { $skip: (pageNumberCat - 1) * DEFAULT_CART_RENT_PER_PAGE },
-                    { $limit: DEFAULT_CART_RENT_PER_PAGE }
+                    { $skip: (pageNumberCat - 1) * categoryPerPage },
+                    { $limit: categoryPerPage }
                 ]);
             } else {
                 cars = await CarRent.aggregate([
-                    { $match: { categoryId: new mongoose.Types.ObjectId(category), carStatus: "available" } },
+                    { $match: { categoryId: new mongoose.Types.ObjectId(category), carStatus: "Available" } },
                     ...carRentAggregation,
                 ]);
             }

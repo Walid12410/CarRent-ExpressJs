@@ -23,7 +23,7 @@ const getActiveOffersAggregation = (userCurrentTime) => [
     },
     {
         $match : {
-            'car.carStatus' : 'available'
+            'car.carStatus' : 'Available'
         }
     },
     {

@@ -3,7 +3,7 @@ const { validationCreateDeviceToken, DeviceToken } = require("../model/DeviceTok
 
 
 /**
- * @desc Create new Category
+ * @desc create or update token
  * @Route /api/deviceToken
  * @method POST
  * @access private (only user)

@@ -10,12 +10,12 @@ const { verifyTokenAndAdmin } = require("../middlewares/verifyToken");
 
 // /api/car-make
 router.route("/")
-    .get(getAllCarMakeController);
+    .get(getAllCarMakeController)
+    .post(verifyTokenAndAdmin, createNewCarMakeController);
 
 
 // /api/car-make/:id
 router.route("/:id")
-    .post(verifyTokenAndAdmin, createNewCarMakeController)
     .put(validationObjectId, verifyTokenAndAdmin, updateCarMakeController)
     .delete(validationObjectId, verifyTokenAndAdmin, deleteCarMakeController);
 

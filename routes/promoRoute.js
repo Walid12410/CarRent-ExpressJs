@@ -14,14 +14,16 @@ const verifyEmployeeToken = require("../middlewares/EmployeeToken");
 
 
 // api/promo
-router.route("/").get(getAllPromoCodeController);
+router.route("/")
+    .get(getAllPromoCodeController)
+    .post(verifyEmployeeToken, photoUpload.single("image"), createNewPromoController);
+
 
 // api/promo/:id
 router.route("/:id")
     .get(validationObjectId, getOnePromoCodeController)
     .put(validationObjectId, verifyEmployeeToken, updatePromoCodeController)
-    .delete(validationObjectId, verifyEmployeeToken, deleteOnePromoController)
-    .post(validationObjectId, verifyEmployeeToken, photoUpload.single("image"), createNewPromoController);
+    .delete(validationObjectId, verifyEmployeeToken, deleteOnePromoController);
 
 // api/promo/claim
 router.route("/claim/:id").post(validationObjectId, verfiyToken, getPromoCodeController);

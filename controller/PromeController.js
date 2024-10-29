@@ -11,7 +11,7 @@ const moment = require("moment");
 
 /**
  * @desc Create new Promo
- * @Route /api/promo/:id
+ * @Route /api/promo
  * @method POST
  * @access private (only employee)
 */
@@ -41,7 +41,6 @@ module.exports.createNewPromoController = asyncHandler(async (req, res) => {
 
         promoCheck = new Promo({
             promoCode: req.body.promoCode,
-            discountAmount: req.body.discountAmount,
             discountPercentage: req.body.discountPercentage,
             startDate: req.body.startDate,
             endDate: req.body.endDate,
@@ -150,7 +149,6 @@ module.exports.updatePromoCodeController = asyncHandler(async (req, res) => {
     const updatePromo = await Promo.findByIdAndUpdate(req.params.id, {
         $set: {
             promoCode: req.body.promoCode,
-            discountAmount: req.body.discountAmount,
             discountPercentage: req.body.discountPercentage,
             startDate: req.body.startDate,
             endDate: req.body.endDate,
