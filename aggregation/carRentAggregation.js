@@ -54,6 +54,55 @@ const carRentAggregation = [
     }
 ];
 
+const companyCarAggregation = [
+    {
+        $lookup: {
+            from: "reviews",
+            localField: "_id",
+            foreignField: "carId",
+            as: "reviews"
+        }
+    },
+    {
+        $lookup: {
+            from: "carimages",
+            localField: "_id",
+            foreignField: "carRentID",
+            as: "CarImage"
+        }
+    },
+    {
+        $lookup: {
+            from: "carmakes",
+            localField: "carMakeId",
+            foreignField: "_id",
+            as: "CarMake"
+        }
+    },
+    {
+        $unwind: {
+            path: "$CarMake",
+            preserveNullAndEmptyArrays: true
+        }
+    },
+    {
+        $sort: {
+            createdAt: -1
+        }
+    },
+    {
+        $addFields: {
+            reviewCount: { $size: { $ifNull: ['$reviews', []] } }, // Provide default empty array
+            averageRating: { $avg: { $ifNull: ['$reviews.rate', []] } }, // Provide default empty array
+        }
+    },
+    {
+        $project: {
+            reviews: 0,
+        },
+    }
+];
+
 const getOneCarRentAggregation = (carId) => [
     {
         $match: {
@@ -330,5 +379,6 @@ module.exports = {
     carRentAggregation,
     carRentAdminAggregation,
     carRentTopRatedAggregation,
-    getOneCarRentAggregation
+    getOneCarRentAggregation,
+    companyCarAggregation
 };

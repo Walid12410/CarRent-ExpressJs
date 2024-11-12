@@ -38,6 +38,12 @@ const UserSchema = new mongoose.Schema({
     isAdmin: {
         type: Boolean, default: false
     },
+    latitude: {
+        type: Number, required : false
+    },
+    longitude: {
+        type: Number , required: false
+    }
 }, {
     timestamps: true
 });
@@ -79,7 +85,9 @@ function validationUpdateUser(obj) {
         firstName: Joi.string().min(2).max(100).trim(),
         lastName: Joi.string().min(2).max(100).trim(),
         phoneNumber: Joi.string().min(6).max(20).trim(),
-        password: Joi.string().min(8).max(100).trim()
+        password: Joi.string().min(8).max(100).trim(),
+        latitude: Joi.number(),
+        longitude: Joi.number()
     });
     return schema.validate(obj);
 }

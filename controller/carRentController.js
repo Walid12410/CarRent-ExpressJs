@@ -13,7 +13,8 @@ const fs = require("fs");
 const { carRentAggregation,
     carRentAdminAggregation,
     carRentTopRatedAggregation,
-    getOneCarRentAggregation
+    getOneCarRentAggregation,
+    companyCarAggregation
 } = require("../aggregation/carRentAggregation");
 
 
@@ -163,14 +164,14 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
             if (companyPageNumber) {
                 cars = await CarRent.aggregate([
                     { $match: { companyId: new mongoose.Types.ObjectId(company) } },
-                    ...carRentAggregation,
+                    ...companyCarAggregation,
                     { $skip: (companyPageNumber - 1) * companyPerPage },
                     { $limit: companyPerPage }
                 ]);
             } else {
                 cars = await CarRent.aggregate([
                     { $match: { companyId: new mongoose.Types.ObjectId(company) } },
-                    ...carRentAggregation,
+                    ...companyCarAggregation,
                 ]);
             }
         } else if (topRated) {

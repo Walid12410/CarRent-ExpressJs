@@ -1,5 +1,8 @@
 const asyncHandler = require("express-async-handler");
-const { validationCreateBooking, Booking, validationUpdateBooking } = require("../model/Booking");
+const { validationCreateBooking,
+    Booking,
+    validationUpdateBooking
+} = require("../model/Booking");
 const { CarRent } = require("../model/CarRent");
 
 
@@ -20,7 +23,7 @@ module.exports.createBookingController = asyncHandler(async (req, res) => {
     if (!carFound) {
         return res.status(404).json({ message: "Car not found" });
     } else {
-        if (carFound.carStatus === "available") {
+        if (carFound.carStatus === "Available") {
             let createBook = new Booking({
                 userId: req.user.id,
                 carId: req.params.id,
@@ -31,7 +34,7 @@ module.exports.createBookingController = asyncHandler(async (req, res) => {
             });
 
             await createBook.save();
-            carFound.carStatus = "rented";
+            carFound.carStatus = "Rented";
             await carFound.save();
 
             return res.status(201).json({ message: "Your booking has been added successfully" });

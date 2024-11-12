@@ -70,7 +70,9 @@ module.exports.updateUserController = asyncHandler(async (req, res) => {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             phoneNumber: req.body.phoneNumber,
-            password: req.body.password
+            password: req.body.password,
+            latitude: req.body.latitude,
+            longitude: req.body.longitude
         }
     }, { new: true }).select("-password");
 

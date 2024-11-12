@@ -29,6 +29,11 @@ module.exports.ceateNewCompanyController = asyncHandler(async (req, res) => {
         companyName: req.body.companyName,
         companyEmail: req.body.companyEmail,
         companyPhoneNumber: req.body.companyPhoneNumber,
+        latitude: req.body.latitude,
+        longitude : req.body.longitude,
+        address : req.body.address,
+        city : req.body.city,
+        country: req.body.country
     });
 
     await company.save();
@@ -96,6 +101,11 @@ module.exports.updateCompanyController = asyncHandler(async (req, res) => {
             companyName: req.body.companyName,
             companyEmail: req.body.companyEmail,
             companyPhoneNumber: req.body.companyPhoneNumber,
+            latitude: req.body.latitude,
+            longitude : req.body.longitude,
+            address : req.body.address,
+            city : req.body.city,
+            country: req.body.country    
         }
     }, { new: true });
 
