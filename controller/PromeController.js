@@ -7,6 +7,7 @@ const { cloudinaryRemoveImage, cloudinaryUploadImage } = require("../utils/cloud
 const path = require("path");
 const fs = require("fs");
 const moment = require("moment");
+const mongoose = require("mongoose");
 
 
 /**
@@ -80,7 +81,7 @@ module.exports.createNewPromoController = asyncHandler(async (req, res) => {
  * @access public
 */
 module.exports.getAllPromoCodeController = asyncHandler(async (req, res) => {
-    const { pageNumber, currentTime, limitPage } = req.query;
+    const { pageNumber, currentTime, limitPage, companyId, companyPageNumber, companyLimitPage } = req.query;
     let promo;
 
     if (pageNumber && currentTime && limitPage) {
@@ -106,10 +107,20 @@ module.exports.getAllPromoCodeController = asyncHandler(async (req, res) => {
         promo = await Promo.find({
             startDate: { $lte: currentTime },
             endDate: { $gte: currentTime }
-        })
-            .skip((page - 1) * limit)
-            .limit(limit)
-            .sort({ createdAt: -1 });
+        }).skip((page - 1) * limit).limit(limit).sort({ createdAt: -1 });
+    } else if (companyId && companyPageNumber && companyLimitPage) {
+        if (!mongoose.Types.ObjectId.isValid(companyId)) {
+            return res.status(400).json({ message: "Invalid Object ID" });
+        } else {
+            const page = parseInt(companyPageNumber, 10);
+            const limit = parseInt(companyLimitPage, 10);
+
+            if (isNaN(page) || page <= 0 || isNaN(limit) || limit <= 0) {
+                return res.status(400).json({ message: "Invalid pagination values" });
+            } else {
+                promo = await Promo.find({ companyId: companyId }).skip((page - 1) * limit).limit(limit).sort({ createdAt: -1 });
+            }
+        }
     } else {
         promo = await Promo.find();
     }
@@ -215,4 +226,28 @@ module.exports.uploadPromoImage = asyncHandler(async (req, res) => {
     });
 
     fs.unlinkSync(imagePath);
+});
+
+
+/**
+ * @desc count how many promo
+ * @Route /api/promo/count
+ * @method GET
+ * @access public
+*/
+module.exports.countPromoController = asyncHandler(async(req,res)=> {
+    const {companyId} = req.query;
+    let promoCount;
+
+    if(companyId) {
+        if(!mongoose.Types.ObjectId.isValid(companyId)){
+            return res.status(400).json({message : "Invalid Object ID"});
+        }else{
+            promoCount = await Promo.countDocuments({companyId});
+        }
+    }else{
+        promoCount = await Promo.countDocuments();
+    }
+
+    res.status(200).json({promoCount});
 });

@@ -298,6 +298,18 @@ module.exports.deleteCarRentController = asyncHandler(async (req, res) => {
  * @access public
 */
 module.exports.countAllCarRentController = asyncHandler(async (req, res) => {
-    const carRentCount = await CarRent.countDocuments();
-    res.status(200).json(carRentCount);
+    const { companyId } = req.query;
+    let carRentCount;
+
+    if (companyId) {
+        if (!mongoose.Types.ObjectId.isValid(companyId)) {
+            return res.status(400).json({ message: "Invalid Object ID" });
+        } else {
+            carRentCount = await CarRent.countDocuments({ companyId });
+        }
+    } else {
+        carRentCount = await CarRent.countDocuments();
+    }
+
+    res.status(200).json({ carRentCount });
 });
