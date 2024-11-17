@@ -3,7 +3,7 @@ const { CarRent,
     validationCreateCarRent,
     validationUpdateCarRent
 } = require("../model/CarRent");
-const { Companies } = require("../model/Company");
+const { CarMake } = require("../model/CarMake");
 const mongoose = require("mongoose");
 const { Category } = require("../model/Category");
 const CarImage = require("../model/CarRentImage");
@@ -29,28 +29,41 @@ module.exports.createCarRentController = asyncHandler(async (req, res) => {
     if (error) return res.status(400).json({ message: error.details[0].message });
 
     const invalidIdCheck = id => !id || !mongoose.Types.ObjectId.isValid(id);
-    if (invalidIdCheck(req.body.companyId) || invalidIdCheck(req.body.categoryId)) {
+    if (invalidIdCheck(req.body.carMakeId) || invalidIdCheck(req.body.categoryId)) {
         return res.status(400).json({ message: "Invalid Object ID" });
     }
 
-    const { companyId, categoryId } = req.body;
+    const { carMakeId, categoryId } = req.body;
 
-    const [companyFound, categoryFound] = await Promise.all([
-        Companies.findOne({ _id: companyId }),
+    const [carMakeFound, categoryFound] = await Promise.all([
+        CarMake.findOne({ _id: carMakeId }),
         Category.findOne({ _id: categoryId }),
     ]);
 
-    if (!companyFound) return res.status(400).json({ message: "Company not found" });
+    if (!carMakeFound) return res.status(400).json({ message: "car make not found" });
     if (!categoryFound) return res.status(400).json({ message: "Category not found" });
 
-    if (req.body.carMake && !mongoose.Types.ObjectId.isValid(req.body.carMake)) {
-        return res.status(400).json({ message: "Invalid Object ID for carMake" });
-    }
 
-    const newCarRent = new CarRent({ ...req.body });
+    const newCarRent = new CarRent({
+        carMakeId: req.body.carMakeId,
+        carModel : req.body.carModel,
+        categoryId : req.body.categoryId,
+        year: req.body.year,
+        color: req.body.color,
+        carStatus : req.body.carStatus,
+        licensePlate : req.body.licensePlate,
+        mileage : req.body.mileage,
+        fuelType : req.body.fuelType,
+        transmission : req.body.transmission,
+        rentPrice : req.body.rentPrice,
+        companyId : req.user.companyId
+    });
     await newCarRent.save();
 
-    res.status(201).json({ message: "New car rent has been created successfully" });
+    res.status(201).json({
+        message: "New car rent has been created successfully",
+        carId: newCarRent._id
+    });
 });
 
 /**
@@ -214,7 +227,7 @@ module.exports.getOneCarRentController = asyncHandler(async (req, res) => {
  * @desc Update Car By ID
  * @Route /api/car-rent/:id
  * @method PUT
- * @access private(only employee)
+ * @access private (only employee)
 */
 module.exports.updateOneCarRentController = asyncHandler(async (req, res) => {
     const { error } = validationUpdateCarRent(req.body);
