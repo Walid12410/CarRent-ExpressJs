@@ -96,7 +96,6 @@ function validationCreateCarRent(obj) {
         year: Joi.string().trim().required(),
         color: Joi.string().trim().min(2).max(100).required(),
         carStatus: Joi.string().trim().min(2).max(100).required(),
-        companyId: Joi.required(),
         licensePlate: Joi.string().trim().min(1).max(100).required(),
         mileage: Joi.string().trim().min(2).max(100).required(),
         fuelType: Joi.string().trim().min(2).max(100).required(),
