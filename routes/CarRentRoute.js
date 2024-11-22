@@ -7,7 +7,7 @@ const { createCarRentController,
     countAllCarRentController,
     AddCarImagesController
 } = require("../controller/CarRentController");
-const verifyEmployeeToken = require("../middlewares/EmployeeToken");
+const verifyEmployeeToken = require("../middlewares/verifyEmloyeeToken");
 const validationObjectId = require("../middlewares/validateObjectID");
 const photoUpload = require("../middlewares/uploadProfilePhoto");
 

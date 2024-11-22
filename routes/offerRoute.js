@@ -4,22 +4,18 @@ const { getActiveOffersController,
     getOneOfferController,
     updateOfferController,
     deleteOfferController,
-    getAllOfferController
+    countOfferController,
 } = require("../controller/OfferController");
 const validationObjectId = require("../middlewares/validateObjectID");
-const verifyEmployeeToken = require("../middlewares/EmployeeToken");
+const verifyEmployeeToken = require("../middlewares/verifyEmloyeeToken");
 
 
 
 // /api/offer
-router.route("/")
-    .get(getActiveOffersController);
+router.route("/").get(getActiveOffersController);
 
-
-// /api/offer/all-offer
-router.route("/all-offer")
-    .get(getAllOfferController);
-
+// /api/offer/count
+router.route("/count").get(countOfferController);
 
 // /api/offer/:id
 router.route("/:id")

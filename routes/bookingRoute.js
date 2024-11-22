@@ -5,7 +5,7 @@ const { createBookingController,
     getBookingUserController,
     getAllBookingController
 } = require("../controller/BookingController");
-const verifyEmployeeToken = require("../middlewares/EmployeeToken");
+const verifyEmployeeToken = require("../middlewares/verifyEmloyeeToken");
 const validationObjectId = require("../middlewares/validateObjectID");
 const { verfiyTokenAndOnlyUser,
     verfiyTokenAndAuthorization

@@ -5,8 +5,8 @@ const { Offer,
 } = require("../model/Offer");
 const mongoose = require("mongoose");
 const { CarRent } = require("../model/CarRent");
-const moment = require("moment");
-const { getActiveOffersAggregation } = require("../aggregation/offerAggregation");
+const { getActiveOffersAggregation, getCompanyOffers, countCompanyOffer } = require("../aggregation/offerAggregation");
+const { parsePaginationParams, validateDate, validateObjectId } = require("../middlewares/helperFunction");
 
 /**
  * @desc Create new offer
@@ -38,25 +38,6 @@ module.exports.createOfferController = asyncHandler(async (req, res) => {
     res.status(201).json({ message: "New offer added successfully" });
 });
 
-/**
- * @desc get All offer
- * @Route /api/offer/all-offer
- * @method GET
- * @access public 
-*/
-module.exports.getAllOfferController = asyncHandler(async (req, res) => {
-    const limit = req.query.top ? parseInt(req.query.top) : null;
-    const offersQuery = Offer.find().populate("car").sort({createdAt : -1 });
-
-    if (limit) {
-        offersQuery.limit(limit); // Apply limit if 'top' exists
-    }
-
-    const offers = await offersQuery;
-
-    res.status(200).json(offers);
-});
-
 
 /**
  * @desc get All offer
@@ -65,38 +46,46 @@ module.exports.getAllOfferController = asyncHandler(async (req, res) => {
  * @access public 
 */
 module.exports.getActiveOffersController = asyncHandler(async (req, res) => {
-    const { currentTime, page = 1, limit = 10 } = req.query;
+    const { currentTime, page, limit, companyId, companyPageNumber, companyPageLimit } = req.query;
+    let offers;
 
-    if (!currentTime) {
-        return res.status(400).json({ message: "Current time is required" });
+    // Handle active offers based on currentTime
+    if (currentTime) {
+        const userCurrentTime = validateDate(currentTime);
+        const { skip, parsedLimit } = parsePaginationParams(page, limit);
+
+        const aggregationPipeline = [
+            ...getActiveOffersAggregation(userCurrentTime),
+            { $skip: skip },
+            { $limit: parsedLimit }
+        ];
+
+        offers = await Offer.aggregate(aggregationPipeline);
+    }
+    else if (companyId) {
+        if (!validateObjectId(companyId)) {
+            return res.status(400).json({ message: "Invalid company ID" });
+        }
+
+        const { skip, parsedLimit } = parsePaginationParams(
+            companyPageNumber,
+            companyPageLimit,
+        );
+
+        const aggregationPipeline = [
+            ...getCompanyOffers(companyId),
+            { $skip: skip },
+            { $limit: parsedLimit }
+        ];
+
+        offers = await Offer.aggregate(aggregationPipeline);
+    } else {
+        return res.status(400).json({ message: "Missing required parameters: 'currentTime' or 'companyId'" });
     }
 
-    const dateFormat = "YYYY-MM-DDTHH:mm:ss"; 
-    const userCurrentTime = moment(currentTime, dateFormat, true).utc().toDate();
-
-    if (!moment(userCurrentTime).isValid()) {
-        return res.status(400).json({ message: "Invalid date format" });
-    }
-
-    const parsedLimit = parseInt(limit, 10);
-    const parsedPage = parseInt(page, 10);
-
-    // Calculate how many records to skip based on the current page
-    const skip = (parsedPage - 1) * parsedLimit;
-
-    // Build the aggregation pipeline
-    let aggregationPipeline = getActiveOffersAggregation(userCurrentTime);
-    
-    // Add limit and skip for pagination
-    aggregationPipeline.push({ $skip: skip });
-    aggregationPipeline.push({ $limit: parsedLimit });
-
-    // Get the active offers with pagination
-    const activeOffers = await Offer.aggregate(aggregationPipeline);
-
-    // Send paginated response
-    res.status(200).json(activeOffers);
+    res.status(200).json(offers);
 });
+
 
 /**
  * @desc get One offer
@@ -169,3 +158,30 @@ module.exports.deleteOfferController = asyncHandler(async (req, res) => {
         res.status(200).json("Offer deleted successfully");
     }
 });
+
+
+/**
+ * @desc count how many offer
+ * @Route /api/offer/count
+ * @method GET
+ * @access public 
+*/
+module.exports.countOfferController = asyncHandler(async(req,res)=> {
+    const {companyId} = req.query;
+    let countDocuments;
+
+    if(companyId){
+        if (!validateObjectId(companyId)) {
+            return res.status(400).json({ message: "Invalid company ID" });
+        }
+
+        countDocuments = await Offer.aggregate([
+            ...countCompanyOffer(companyId)
+        ]);
+
+        return res.status(200).json(countDocuments[0]);
+    }else{
+
+    }
+
+})

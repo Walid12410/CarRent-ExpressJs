@@ -11,7 +11,7 @@ const validationObjectId = require("../middlewares/validateObjectID");
 const { verfiyToken } = require("../middlewares/verifyToken");
 const { usePromoCodeController, checkPromoCodeController, getPromoCodeController } = require("../controller/GetPromoController");
 const photoUpload = require("../middlewares/uploadProfilePhoto");
-const verifyEmployeeToken = require("../middlewares/EmployeeToken");
+const verifyEmployeeToken = require("../middlewares/verifyEmloyeeToken");
 
 // api/promo/count
 router.route("/count").get(countPromoController);
