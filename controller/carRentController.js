@@ -125,6 +125,7 @@ module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
 */
 module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
     const DEFAULT_CART_RENT_PER_PAGE = 3;
+    const DEFAULT_CART_RENT_PAGE_NUMBER = 1;
     const { pageNumber, pageNumberCat, category, company, car_rent_per_page,
         isAdmin, topRated, companyPageNumber, companyLimitPage, TopRatedPageNumber,
         TopRatedLimitPage, categoryLimitPage
@@ -132,6 +133,8 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
     const carsPerPage = car_rent_per_page ? parseInt(car_rent_per_page) : DEFAULT_CART_RENT_PER_PAGE;
     const companyPerPage = companyLimitPage ? parseInt(companyLimitPage) : DEFAULT_CART_RENT_PER_PAGE;
     const topRatedPerPage = TopRatedLimitPage ? parseInt(TopRatedLimitPage) : DEFAULT_CART_RENT_PER_PAGE;
+
+    const pagePerCategory = pageNumberCat ? parseInt(pageNumberCat) : DEFAULT_CART_RENT_PAGE_NUMBER;
     const categoryPerPage = categoryLimitPage ? parseInt(categoryLimitPage) : DEFAULT_CART_RENT_PER_PAGE;
 
     let cars;
@@ -161,7 +164,7 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
                 cars = await CarRent.aggregate([
                     { $match: { categoryId: new mongoose.Types.ObjectId(category), carStatus: "Available" } },
                     ...carRentAggregation,
-                    { $skip: (pageNumberCat - 1) * categoryPerPage },
+                    { $skip: (pagePerCategory - 1) * categoryPerPage },
                     { $limit: categoryPerPage }
                 ]);
             } else {
