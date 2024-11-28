@@ -126,10 +126,12 @@ module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
 module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
     const DEFAULT_CART_RENT_PER_PAGE = 3;
     const DEFAULT_CART_RENT_PAGE_NUMBER = 1;
-    const { pageNumber, pageNumberCat, category, company, car_rent_per_page,
+    const { pageNumber, perPage, pageNumberCat, category, company, car_rent_per_page,
         isAdmin, topRated, companyPageNumber, companyLimitPage, TopRatedPageNumber,
         TopRatedLimitPage, categoryLimitPage
     } = req.query;
+
+    const latestCarPerPage = perPage ? parseInt(perPage) : DEFAULT_CART_RENT_PER_PAGE;
     const carsPerPage = car_rent_per_page ? parseInt(car_rent_per_page) : DEFAULT_CART_RENT_PER_PAGE;
     const companyPerPage = companyLimitPage ? parseInt(companyLimitPage) : DEFAULT_CART_RENT_PER_PAGE;
     const topRatedPerPage = TopRatedLimitPage ? parseInt(TopRatedLimitPage) : DEFAULT_CART_RENT_PER_PAGE;
@@ -142,19 +144,24 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
     if (isAdmin) {
         if (pageNumber) {
             cars = await CarRent.aggregate([
+                { $match: {carStatus: "Available" } },
                 ...carRentAdminAggregation,
                 { $skip: (pageNumber - 1) * carsPerPage },
                 { $limit: carsPerPage }
             ]);
         } else {
-            cars = await CarRent.aggregate([...carRentAdminAggregation]);
+            cars = await CarRent.aggregate([
+                { $match: {carStatus: "Available" } },
+                ...carRentAdminAggregation
+            ]);
         }
     } else {
         if (pageNumber) {
             cars = await CarRent.aggregate([
+                { $match: {carStatus: "Available" } },
                 ...carRentAggregation,
-                { $skip: (pageNumber - 1) * carsPerPage },
-                { $limit: carsPerPage }
+                { $skip: (pageNumber - 1) * latestCarPerPage },
+                { $limit: latestCarPerPage }
             ]);
         } else if (category) {
             if (!category || !mongoose.Types.ObjectId.isValid(category)) {
@@ -179,7 +186,7 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
             }
             if (companyPageNumber) {
                 cars = await CarRent.aggregate([
-                    { $match: { companyId: new mongoose.Types.ObjectId(company) } },
+                    { $match: { companyId: new mongoose.Types.ObjectId(company)}},
                     ...companyCarAggregation,
                     { $skip: (companyPageNumber - 1) * companyPerPage },
                     { $limit: companyPerPage }
@@ -193,12 +200,16 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
         } else if (topRated) {
             if (TopRatedPageNumber) {
                 cars = await CarRent.aggregate([
+                    { $match: {carStatus: "Available"}},
                     ...carRentTopRatedAggregation,
                     { $skip: (TopRatedPageNumber - 1) * topRatedPerPage },
                     { $limit: topRatedPerPage }
                 ]);
             } else {
-                cars = await CarRent.aggregate([...carRentTopRatedAggregation]);
+                cars = await CarRent.aggregate([
+                    { $match: {carStatus: "Available"}},
+                    ...carRentTopRatedAggregation
+                ]);
             }
         } else {
             cars = await CarRent.find().sort({ createdAt: -1 })

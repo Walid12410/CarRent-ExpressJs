@@ -2,11 +2,6 @@ const ObjectId = require('mongodb').ObjectId;
 
 const carRentAggregation = [
     {
-        $match: {
-            carStatus: "Available"
-        }
-    },
-    {
         $lookup: {
             from: "reviews",
             localField: "_id",
@@ -263,11 +258,6 @@ const getOneCarRentAggregation = (carId) => [
 ];
 
 const carRentTopRatedAggregation = [
-    {
-        $match: {
-            carStatus: "available"
-        }
-    },
     {
         $lookup: {
             from: "reviews",
