@@ -16,6 +16,7 @@ const { carRentAggregation,
     getOneCarRentAggregation,
     companyCarAggregation
 } = require("../aggregation/carRentAggregation");
+const { validateObjectId } = require("../middlewares/helperFunction");
 
 
 /**
@@ -46,17 +47,17 @@ module.exports.createCarRentController = asyncHandler(async (req, res) => {
 
     const newCarRent = new CarRent({
         carMakeId: req.body.carMakeId,
-        carModel : req.body.carModel,
-        categoryId : req.body.categoryId,
+        carModel: req.body.carModel,
+        categoryId: req.body.categoryId,
         year: req.body.year,
         color: req.body.color,
-        carStatus : req.body.carStatus,
-        licensePlate : req.body.licensePlate,
-        mileage : req.body.mileage,
-        fuelType : req.body.fuelType,
-        transmission : req.body.transmission,
-        rentPrice : req.body.rentPrice,
-        companyId : req.user.companyId
+        carStatus: req.body.carStatus,
+        licensePlate: req.body.licensePlate,
+        mileage: req.body.mileage,
+        fuelType: req.body.fuelType,
+        transmission: req.body.transmission,
+        rentPrice: req.body.rentPrice,
+        companyId: req.user.companyId
     });
     await newCarRent.save();
 
@@ -144,21 +145,21 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
     if (isAdmin) {
         if (pageNumber) {
             cars = await CarRent.aggregate([
-                { $match: {carStatus: "Available" } },
+                { $match: { carStatus: "Available" } },
                 ...carRentAdminAggregation,
                 { $skip: (pageNumber - 1) * carsPerPage },
                 { $limit: carsPerPage }
             ]);
         } else {
             cars = await CarRent.aggregate([
-                { $match: {carStatus: "Available" } },
+                { $match: { carStatus: "Available" } },
                 ...carRentAdminAggregation
             ]);
         }
     } else {
         if (pageNumber) {
             cars = await CarRent.aggregate([
-                { $match: {carStatus: "Available" } },
+                { $match: { carStatus: "Available" } },
                 ...carRentAggregation,
                 { $skip: (pageNumber - 1) * latestCarPerPage },
                 { $limit: latestCarPerPage }
@@ -186,7 +187,7 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
             }
             if (companyPageNumber) {
                 cars = await CarRent.aggregate([
-                    { $match: { companyId: new mongoose.Types.ObjectId(company)}},
+                    { $match: { companyId: new mongoose.Types.ObjectId(company) } },
                     ...companyCarAggregation,
                     { $skip: (companyPageNumber - 1) * companyPerPage },
                     { $limit: companyPerPage }
@@ -200,14 +201,14 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
         } else if (topRated) {
             if (TopRatedPageNumber) {
                 cars = await CarRent.aggregate([
-                    { $match: {carStatus: "Available"}},
+                    { $match: { carStatus: "Available" } },
                     ...carRentTopRatedAggregation,
                     { $skip: (TopRatedPageNumber - 1) * topRatedPerPage },
                     { $limit: topRatedPerPage }
                 ]);
             } else {
                 cars = await CarRent.aggregate([
-                    { $match: {carStatus: "Available"}},
+                    { $match: { carStatus: "Available" } },
                     ...carRentTopRatedAggregation
                 ]);
             }
@@ -339,4 +340,58 @@ module.exports.countAllCarRentController = asyncHandler(async (req, res) => {
     }
 
     res.status(200).json({ carRentCount });
+});
+
+
+
+/**
+ * @desc Search for specific car
+ * @Route /api/car-rent/search
+ * @method GET
+ * @access public
+*/
+module.exports.searchCarController = asyncHandler(async (req, res) => {
+    const { carMakeId, categoryId, carModel ,priceMin, priceMax, page = 1, limit = 10 } = req.query;
+
+    const query = {};
+
+    // Handle rent price range (assuming price is stored as a string)
+    if(priceMin && priceMax) {
+        query.rentPrice = {$gte: parseFloat(priceMin) , $lte: parseFloat(priceMax) } ; 
+    }
+
+    // Validate and handle carMakeId and categoryId
+    if (carMakeId) {
+        if (!validateObjectId(carMakeId)) {
+            return res.status(400).json({ message: "Invalid car make" });
+        }
+        query.carMakeId = carMakeId;
+    }
+
+    if (categoryId) {
+        if (!validateObjectId(categoryId)) {
+            return res.status(400).json({ message: "Invalid category" });
+        }
+        query.categoryId = categoryId;
+    }
+
+    // Handle carName search (partial match, case-insensitive)
+    if (carModel) {
+        query.carModel = { $regex: new RegExp(carModel, 'i') };  // 'i' makes the search case-insensitive
+    }
+
+    // result
+    const result = await CarRent.find(query)
+        .skip((page - 1) * limit)
+        .limit(parseInt(limit));
+
+    const total = await CarRent.countDocuments(query);
+
+    res.status(200).json({
+        success: true,
+        date: result,
+        total,
+        currentPage: parseInt(page),
+        totalPage: Math.ceil(total / limit)
+    });
 });

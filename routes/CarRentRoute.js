@@ -5,7 +5,8 @@ const { createCarRentController,
     updateOneCarRentController,
     deleteCarRentController,
     countAllCarRentController,
-    AddCarImagesController
+    AddCarImagesController,
+    searchCarController
 } = require("../controller/CarRentController");
 const verifyEmployeeToken = require("../middlewares/verifyEmloyeeToken");
 const validationObjectId = require("../middlewares/validateObjectID");
@@ -19,6 +20,9 @@ router.route("/count")
 router.route("/")
     .get(getAllCarRentController)
     .post(verifyEmployeeToken, createCarRentController);
+
+// api/car-rent/search
+router.route("/search").get(searchCarController);
 
 // api/car-rent/:id
 router.route("/:id")

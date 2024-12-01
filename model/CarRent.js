@@ -51,7 +51,7 @@ const CarRentSchema = new mongoose.Schema({
         maxLength: 100
     },
     rentPrice: {
-        type: String, required: true,
+        type: Number, required: true,
         trim: true, minLength: 1,
         maxLength: 20
     },
@@ -99,8 +99,8 @@ function validationCreateCarRent(obj) {
         licensePlate: Joi.string().trim().min(1).max(100).required(),
         mileage: Joi.string().trim().min(2).max(100).required(),
         fuelType: Joi.string().trim().min(2).max(100).required(),
-        transmission: Joi.string().trim().min(2).max(100).required(),
-        rentPrice: Joi.string().trim().min(1).max(20).required(),
+        transmission: Joi.string().trim().min(2).max(500).required(),
+        rentPrice: Joi.number().min(1).max(20).required(),
         categoryId: Joi.required(),
     });
     return schema.validate(obj);
@@ -118,7 +118,7 @@ function validationUpdateCarRent(obj) {
         mileage: Joi.string().trim().min(2).max(100),
         fuelType: Joi.string().trim().min(2).max(100),
         transmission: Joi.string().trim().min(2).max(100),
-        rentPrice: Joi.string().trim().min(1).max(20),
+        rentPrice: Joi.number().min(1).max(500),
         categoryId: Joi.string().hex()
     });
     return schema.validate(obj);
