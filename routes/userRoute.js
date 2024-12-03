@@ -10,17 +10,16 @@ const photoUpload = require("../middlewares/uploadProfilePhoto");
 
 
 // api/user/profile
-router.route("/profile")
-    .get(verifyTokenAndAdmin, getAllUserController);
+router.route("/profile").get(verifyTokenAndAdmin, getAllUserController);
 
-// api/user/profile
+
+// api/user/profile/:id
 router.route("/profile/:id")
     .get(validationObjectId, getOneUserController)
     .put(validationObjectId, verfiyTokenAndOnlyUser, updateUserController);
 
 // api/user/count
-router.route("/count")
-    .get(countUserController);
+router.route("/count").get(countUserController);
 
 // api/user/profile/upload-image
 router.route("/profile/upload-image")

@@ -29,7 +29,9 @@ module.exports.registerUserController = asyncHandler(async (req, res) => {
         lastName: req.body.lastName,
         email: req.body.email,
         phoneNumber: req.body.phoneNumber,
-        password: hashedPassword
+        password: hashedPassword,
+        latitude: null,
+        longitude : null
     });
 
     // save user to database
@@ -63,7 +65,7 @@ module.exports.loginUserController = asyncHandler(async (req, res) => {
         return res.status(400).json({message : "Incorrect Email Or Password"});
     }
 
-   // @TODO Email Verification -- Generate token
+   // @TODO Email Verification
 
    const token = user.generateAuthToken();
    

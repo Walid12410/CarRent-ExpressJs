@@ -50,7 +50,7 @@ module.exports.getOneUserController = asyncHandler(async (req, res) => {
 
 /**
  * @desc Update User Profile
- * @Route /api/user/profile/:id
+ * @Route /api/user/profile
  * @method PUT
  * @access private(only user himeself)
 */
