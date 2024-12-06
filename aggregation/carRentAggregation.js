@@ -300,11 +300,18 @@ const carRentTopRatedAggregation = [
         }
     },
     {
+        $unwind: {
+            path: "$CarMake",
+            preserveNullAndEmptyArrays: true
+        }
+    },
+
+    {
         $project: {
             CarImage: 1,
             reviewCount: 1,
             averageRating: 1,
-            carMake: 1,
+            carMakeId: 1,
             year: 1,
             color: 1,
             carType: 1,
@@ -319,6 +326,8 @@ const carRentTopRatedAggregation = [
             categoryId: 1,
             createdAt: 1,
             updatedAt: 1,
+            CarMake : 1,
+            carModel: 1
         }
     },
 ];

@@ -351,16 +351,16 @@ module.exports.countAllCarRentController = asyncHandler(async (req, res) => {
  * @access public
 */
 module.exports.searchCarController = asyncHandler(async (req, res) => {
-    const { carMakeId, categoryId, carModel ,priceMin, priceMax, page = 1, limit = 10 } = req.query;
+    const { carMakeId, categoryId, carModel, priceMin, priceMax, page = 1, limit = 10 } = req.body;
 
     const query = {};
 
     // Handle rent price range (assuming price is stored as a string)
-    if(priceMin && priceMax) {
-        query.rentPrice = {$gte: parseFloat(priceMin) , $lte: parseFloat(priceMax) } ; 
+    if (priceMin && priceMax) {
+        query.rentPrice = { $gte: parseFloat(priceMin), $lte: parseFloat(priceMax) };
     }
 
-    // Validate and handle carMakeId and categoryId
+    // Validate and handle carMakeId
     if (carMakeId) {
         if (!validateObjectId(carMakeId)) {
             return res.status(400).json({ message: "Invalid car make" });
@@ -368,23 +368,31 @@ module.exports.searchCarController = asyncHandler(async (req, res) => {
         query.carMakeId = carMakeId;
     }
 
+    // Handle multiple categoryIds from the body
     if (categoryId) {
-        if (!validateObjectId(categoryId)) {
-            return res.status(400).json({ message: "Invalid category" });
+        // Ensure categoryId is an array
+        const categories = Array.isArray(categoryId) ? categoryId : categoryId.split(',').map(id => id.trim());
+        
+        // Ensure all values are valid ObjectIds
+        if (categories.some(id => !validateObjectId(id))) {
+            return res.status(400).json({ message: "One or more invalid category IDs" });
         }
-        query.categoryId = categoryId;
+        
+        // Use $in operator to match any of the categoryIds
+        query.categoryId = { $in: categories };
     }
 
-    // Handle carName search (partial match, case-insensitive)
+    // Handle carModel search (partial match, case-insensitive)
     if (carModel) {
         query.carModel = { $regex: new RegExp(carModel, 'i') };  // 'i' makes the search case-insensitive
     }
 
-    // result
+    // Fetch the results
     const result = await CarRent.find(query)
         .skip((page - 1) * limit)
         .limit(parseInt(limit));
 
+    // Count total results
     const total = await CarRent.countDocuments(query);
 
     res.status(200).json({
