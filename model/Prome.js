@@ -57,6 +57,12 @@ const promoSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
+promoSchema.virtual("Company",{
+    ref : "Companies",
+    localField : "companyId",
+    foreignField : "_id"
+});
+
 
 // Create the Promo model using the schema
 const Promo = mongoose.model('Promo', promoSchema);

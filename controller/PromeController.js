@@ -48,7 +48,7 @@ module.exports.createNewPromoController = asyncHandler(async (req, res) => {
             usageLimit: req.body.usageLimit,
             usedCount: req.body.usedCount,
             promoTitle: req.body.promoTitle,
-            companyId: req.body.companyId,
+            companyId: req.user.companyId,
             promoDescription: req.body.promoDescription,
             promoImage: {
                 url: result.secure_url,
@@ -136,7 +136,7 @@ module.exports.getAllPromoCodeController = asyncHandler(async (req, res) => {
  * @access public
 */
 module.exports.getOnePromoCodeController = asyncHandler(async (req, res) => {
-    const promo = await Promo.findById(req.params.id);
+    const promo = await Promo.findById(req.params.id).populate("Company");
     if (promo) {
         res.status(200).json(promo);
     } else {
@@ -235,19 +235,19 @@ module.exports.uploadPromoImage = asyncHandler(async (req, res) => {
  * @method GET
  * @access public
 */
-module.exports.countPromoController = asyncHandler(async(req,res)=> {
-    const {companyId} = req.query;
+module.exports.countPromoController = asyncHandler(async (req, res) => {
+    const { companyId } = req.query;
     let promoCount;
 
-    if(companyId) {
-        if(!mongoose.Types.ObjectId.isValid(companyId)){
-            return res.status(400).json({message : "Invalid Object ID"});
-        }else{
-            promoCount = await Promo.countDocuments({companyId});
+    if (companyId) {
+        if (!mongoose.Types.ObjectId.isValid(companyId)) {
+            return res.status(400).json({ message: "Invalid Object ID" });
+        } else {
+            promoCount = await Promo.countDocuments({ companyId });
         }
-    }else{
+    } else {
         promoCount = await Promo.countDocuments();
     }
 
-    res.status(200).json({promoCount});
+    res.status(200).json({ promoCount });
 });

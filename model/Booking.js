@@ -16,8 +16,21 @@ const BookingSchema = new mongoose.Schema({
         minLength: 1 , maxLength: 100,
         trim: true
     },
+    promoCode : {
+        type : String, minLength: 0 , required : false,
+        maxLength: 100, trim: true
+    },
+    discountPercent: {
+        type : Number , required: false,
+        minLength: 0 , maxLength: 500,
+        trim: true
+    },
+    mainCarPrice : {
+        type : Number , required: true,
+        trim : true
+    },
     totalRentPrice : {
-        type : String , required: true,
+        type : Number , required: true,
         trim : true
     },
     startDate: {
@@ -55,6 +68,9 @@ function validationCreateBooking(obj) {
         totalRentPrice: Joi.string().required(),
         startDate: Joi.date().iso().required(),
         endDate: Joi.date().iso().greater(Joi.ref('startDate')).required(),
+        mainCarPrice : Joi.number().min(1).max(500).required(),
+        promoCode : Joi.number(),
+        discountPercent : Joi.number()
     });
     return schema.validate(obj);
 }

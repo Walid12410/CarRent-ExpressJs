@@ -29,6 +29,9 @@ module.exports.createBookingController = asyncHandler(async (req, res) => {
                 carId: req.params.id,
                 daysRent: req.body.daysRent,
                 totalRentPrice: req.body.totalRentPrice,
+                promoCode: req.body.promoCode,
+                mainCarPrice : req.body.mainCarPrice,
+                discountPercent : req.body.discountPercent,
                 startDate: req.body.startDate,
                 endDate: req.body.endDate
             });
@@ -61,6 +64,9 @@ module.exports.updateBookingController = asyncHandler(async (req, res) => {
         $set: {
             daysRent: req.body.daysRent,
             totalRentPrice: req.body.totalRentPrice,
+            promoCode: req.body.promoCode,
+            mainCarPrice : req.body.mainCarPrice,
+            discountPercent : req.body.discountPercent,
             startDate: req.body.startDate,
             endDate: req.body.endDate
         }
