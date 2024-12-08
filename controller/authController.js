@@ -31,7 +31,8 @@ module.exports.registerUserController = asyncHandler(async (req, res) => {
         phoneNumber: req.body.phoneNumber,
         password: hashedPassword,
         latitude: null,
-        longitude : null
+        longitude : null,
+        locationName : null
     });
 
     // save user to database

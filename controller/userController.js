@@ -72,7 +72,8 @@ module.exports.updateUserController = asyncHandler(async (req, res) => {
             phoneNumber: req.body.phoneNumber,
             password: req.body.password,
             latitude: req.body.latitude,
-            longitude: req.body.longitude
+            longitude: req.body.longitude,
+            locationName : req.body.locationName
         }
     }, { new: true }).select("-password");
 

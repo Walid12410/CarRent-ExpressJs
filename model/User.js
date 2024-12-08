@@ -43,6 +43,9 @@ const UserSchema = new mongoose.Schema({
     },
     longitude: {
         type: Number , required: false
+    },
+    locationName : {
+        type : String , required : false, minLength : 1 , maxLength : 200
     }
 }, {
     timestamps: true
@@ -65,7 +68,8 @@ function validationRegisterUser(obj) {
         lastName: Joi.string().min(2).max(100).trim().required(),
         email: Joi.string().min(5).max(100).trim().required(),
         phoneNumber: Joi.string().min(6).max(20).trim().required(),
-        password: Joi.string().min(8).max(100).trim().required()
+        password: Joi.string().min(8).max(100).trim().required(),
+        locationName : Joi.string().min(1).max(100).trim().required()
     });
     return schema.validate(obj);
 }
@@ -87,7 +91,8 @@ function validationUpdateUser(obj) {
         phoneNumber: Joi.string().min(6).max(20).trim(),
         password: Joi.string().min(8).max(100).trim(),
         latitude: Joi.number(),
-        longitude: Joi.number()
+        longitude: Joi.number(),
+        locationName : Joi.string().min(1).max(100).trim()
     });
     return schema.validate(obj);
 }
