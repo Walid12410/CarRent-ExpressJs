@@ -69,7 +69,7 @@ function validationCreateBooking(obj) {
         startDate: Joi.date().iso().required(),
         endDate: Joi.date().iso().greater(Joi.ref('startDate')).required(),
         mainCarPrice : Joi.number().min(1).max(500).required(),
-        promoCode : Joi.number(),
+        promoCode : Joi.string(),
         discountPercent : Joi.number()
     });
     return schema.validate(obj);

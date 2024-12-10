@@ -30,8 +30,8 @@ module.exports.createBookingController = asyncHandler(async (req, res) => {
                 daysRent: req.body.daysRent,
                 totalRentPrice: req.body.totalRentPrice,
                 promoCode: req.body.promoCode,
-                mainCarPrice : req.body.mainCarPrice,
-                discountPercent : req.body.discountPercent,
+                mainCarPrice: req.body.mainCarPrice,
+                discountPercent: req.body.discountPercent,
                 startDate: req.body.startDate,
                 endDate: req.body.endDate
             });
@@ -65,8 +65,8 @@ module.exports.updateBookingController = asyncHandler(async (req, res) => {
             daysRent: req.body.daysRent,
             totalRentPrice: req.body.totalRentPrice,
             promoCode: req.body.promoCode,
-            mainCarPrice : req.body.mainCarPrice,
-            discountPercent : req.body.discountPercent,
+            mainCarPrice: req.body.mainCarPrice,
+            discountPercent: req.body.discountPercent,
             startDate: req.body.startDate,
             endDate: req.body.endDate
         }
@@ -90,12 +90,24 @@ module.exports.getBookingUserController = asyncHandler(async (req, res) => {
     const bookings = await Booking.find({ userId: req.params.id })
         .populate({
             path: "car",
-            populate: { path: "CarImage" }
-        }).populate("CarImage").sort({ createdAt: -1 });
+            populate: [
+                { path: "CarImage" },
+                { path: "CarMake" }
+            ],
+        })
+        .lean() // Convert to plain JavaScript objects for easier manipulation
+        .sort({ createdAt: -1 });
 
-    if (!bookings || bookings.length === 0) {
-        return res.status(404).json({ message: "No bookings found for this user" });
-    }
+    // Convert CarMake array to an object (assuming there's only one item)
+    bookings.forEach(booking => {
+        if (booking.car && booking.car.length > 0) {
+            const car = booking.car[0];
+            if (car.CarMake && car.CarMake.length > 0) {
+                car.CarMake = car.CarMake[0]; // Set CarMake to the first object in the array
+            }
+        }
+    });
+
     res.status(200).json(bookings);
 });
 
@@ -108,21 +120,21 @@ module.exports.getBookingUserController = asyncHandler(async (req, res) => {
 */
 module.exports.getAllBookingController = asyncHandler(async (req, res) => {
     const DEFAULT_BOOKING_CAR_PER_PAGE = 3;
-    const { pageNumber , limitPage} = req.query;
+    const { pageNumber, limitPage } = req.query;
     const bookingPerPage = limitPage ? parseInt(limitPage) : DEFAULT_BOOKING_CAR_PER_PAGE;
 
     let allBookings;
 
-    if(pageNumber){
+    if (pageNumber) {
         allBookings = await Booking.find().populate({
             path: "user",
-            select : "-password"
+            select: "-password"
         }).populate({
             path: "car",
-            populate : { path: "CarImage"}
-        }).sort({ createdAt : -1 }).skip( (pageNumber -1 ) * bookingPerPage)
-        .limit(bookingPerPage);
-    }else{
+            populate: { path: "CarImage" }
+        }).sort({ createdAt: -1 }).skip((pageNumber - 1) * bookingPerPage)
+            .limit(bookingPerPage);
+    } else {
         allBookings = await Booking.find();
     }
 

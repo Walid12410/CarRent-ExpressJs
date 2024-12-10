@@ -8,15 +8,16 @@ const { createBookingController,
 const verifyEmployeeToken = require("../middlewares/verifyEmloyeeToken");
 const validationObjectId = require("../middlewares/validateObjectID");
 const { verfiyTokenAndOnlyUser,
-    verfiyTokenAndAuthorization
+    verfiyTokenAndAuthorization,
+    verfiyToken
 } = require("../middlewares/verifyToken");
 
 
 
 // api/booking/:id
 router.route("/:id")
-    .post(validationObjectId, verfiyTokenAndOnlyUser, createBookingController)
-    .put(validationObjectId, verfiyTokenAndOnlyUser, updateBookingController)
+    .post(validationObjectId, verfiyToken, createBookingController)
+    .put(validationObjectId, verfiyToken, updateBookingController)
     .delete(validationObjectId, verfiyTokenAndAuthorization, deleteBookingController)
     .get(validationObjectId, verfiyTokenAndAuthorization, getBookingUserController);
 

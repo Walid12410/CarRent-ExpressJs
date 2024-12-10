@@ -70,21 +70,29 @@ const CarRentSchema = new mongoose.Schema({
 CarRentSchema.virtual("category", {
     ref: "Category",
     localField: "categoryId",
-    foreignField: "_id"       
+    foreignField: "_id"
 });
 
 
-CarRentSchema.virtual("companyDetails",{
+CarRentSchema.virtual("companyDetails", {
     ref: "Companies",
-    foreignField : "_id",
-    localField : "companyId"
+    foreignField: "_id",
+    localField: "companyId"
 });
+
 
 CarRentSchema.virtual("CarImage", {
     ref: "CarImage",
-    foreignField : "carRentID",
-    localField : "_id"
+    foreignField: "carRentID",
+    localField: "_id"
 });
+
+CarRentSchema.virtual("CarMake", {
+    ref: "CarMake",
+    foreignField: "_id",
+    localField: "carMakeId",
+});
+
 
 const CarRent = mongoose.model("CarRent", CarRentSchema);
 
