@@ -5,6 +5,7 @@ const { getActiveOffersController,
     updateOfferController,
     deleteOfferController,
     countOfferController,
+    checkCarIsOfferController,
 } = require("../controller/OfferController");
 const validationObjectId = require("../middlewares/validateObjectID");
 const verifyEmployeeToken = require("../middlewares/verifyEmloyeeToken");
@@ -16,6 +17,9 @@ router.route("/").get(getActiveOffersController);
 
 // /api/offer/count
 router.route("/count").get(countOfferController);
+
+// /api/offer/check-car/:id
+router.route("/check-car/:id").get(validationObjectId,checkCarIsOfferController);
 
 // /api/offer/:id
 router.route("/:id")

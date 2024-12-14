@@ -67,6 +67,7 @@ module.exports.createCarRentController = asyncHandler(async (req, res) => {
     });
 });
 
+
 /**
  * @desc Get All Car
  * @Route /api/car-rent/car-image/:id

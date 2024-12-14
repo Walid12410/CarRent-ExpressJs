@@ -88,6 +88,33 @@ module.exports.getActiveOffersController = asyncHandler(async (req, res) => {
 
 
 /**
+ * @desc get is car offer
+ * @Route /api/offer/check-car/:id
+ * @method GET
+ * @access public 
+*/
+module.exports.checkCarIsOfferController = asyncHandler( async(req, res) => {
+    const { currentTime } = req.query;
+    let offer;
+
+    if(currentTime) {
+        const userCurrentTime = validateDate(currentTime);
+        const aggregationPipeline = [
+            ...getActiveOffersAggregation(userCurrentTime),
+           { $match : {carId : new mongoose.Types.ObjectId(req.params.id) }}
+        ];
+
+        offer = await Offer.aggregate(aggregationPipeline);
+    }else{
+        return res.status(400).json({message : "time is required"})
+    }
+
+    res.status(200).json(offer);
+
+});
+
+
+/**
  * @desc get One offer
  * @Route /api/offer/:id
  * @method GET

@@ -1,6 +1,5 @@
 const asyncHandler = require("express-async-handler");
 const { Promo } = require("../model/Prome");
-const mongoose = require("mongoose");
 const { GetPromo } = require("../model/GetPromo");
 
 
@@ -40,6 +39,17 @@ module.exports.getPromoCodeController = asyncHandler(async (req, res) => {
     await newClaim.save();
 
     res.status(201).json({ message: "Promotion claimed successfully" });
+});
+
+/**
+ * @desc Get user promo
+ * @Route /api/promo/user-promo
+ * @method GET
+ * @access private (only user)
+*/
+module.exports.getUserPromoController = asyncHandler(async (req, res) => {
+    const userPromo = await GetPromo.find({userId : req.user.id});
+    res.status(200).json(userPromo);
 });
 
 

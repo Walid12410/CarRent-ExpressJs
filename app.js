@@ -3,7 +3,13 @@ const connectToDB = require("./config/connectToDB");
 const { notFound, errorHandler } = require("./middlewares/error");
 const cors = require("cors");
 require("dotenv").config();
+const admin = require('firebase-admin');
 
+
+// admin.initializeApp({
+//     credential: admin.credential.applicationDefault(),
+//   });
+  
 
 // Connection to database
 connectToDB();
