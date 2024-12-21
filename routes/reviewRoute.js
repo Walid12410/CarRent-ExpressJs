@@ -2,7 +2,8 @@ const router = require("express").Router();
 const { createReviewController,
     getAllCarReviewController,
     updateReviewController,
-    deleteReviewController
+    deleteReviewController,
+    getOneReviewByUserController
 } = require("../controller/ReviewController");
 const validationObjectId = require("../middlewares/validateObjectID");
 const { verfiyTokenAndAuthorization,
@@ -16,6 +17,11 @@ router.route("/:id")
     .post(validationObjectId, verfiyToken, createReviewController)
     .put(validationObjectId, verfiyToken, updateReviewController)
     .delete(validationObjectId, verfiyTokenAndAuthorization, deleteReviewController);
+
+// /api/review/user-review/:id
+
+router.route("/user-review/:id")
+    .get(validationObjectId,verfiyToken, getOneReviewByUserController)
 
 
 module.exports = router;

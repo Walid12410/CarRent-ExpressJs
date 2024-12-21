@@ -404,3 +404,4 @@ module.exports.searchCarController = asyncHandler(async (req, res) => {
         totalPage: Math.ceil(total / limit)
     });
 });
+

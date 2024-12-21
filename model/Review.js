@@ -30,6 +30,12 @@ const ReviewSchema = new mongoose.Schema({
     toObject : {virtuals : true}
 });
 
+ReviewSchema.virtual("user",{
+    ref : "User",
+    localField : "userId",
+    foreignField : "_id"
+});
+
 const Review = mongoose.model("Review", ReviewSchema);
 
 

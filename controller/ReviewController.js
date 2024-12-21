@@ -59,6 +59,18 @@ module.exports.getAllCarReviewController = asyncHandler(async (req, res) => {
 
 
 /**
+ * @desc Get one review for user by carId
+ * @Route /api/review/:id
+ * @method GET
+ * @access private(only user)
+ */
+module.exports.getOneReviewByUserController = asyncHandler(async (req, res) => {
+    const review = await Review.findOne({ carId: req.params.id }).populate("user");
+    res.status(200).json(review);
+});
+
+
+/**
  * @desc Update Reviews for a Car
  * @Route /api/review/:id
  * @method PUT
