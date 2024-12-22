@@ -22,7 +22,7 @@ router.route("/")
     .post(verifyEmployeeToken, createCarRentController);
 
 // api/car-rent/search
-router.route("/search").get(searchCarController);
+router.route("/search").post(searchCarController);
 
 // api/car-rent/:id
 router.route("/:id")

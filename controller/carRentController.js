@@ -348,7 +348,7 @@ module.exports.countAllCarRentController = asyncHandler(async (req, res) => {
 /**
  * @desc Search for specific car
  * @Route /api/car-rent/search
- * @method GET
+ * @method POST
  * @access public
 */
 module.exports.searchCarController = asyncHandler(async (req, res) => {
@@ -360,6 +360,8 @@ module.exports.searchCarController = asyncHandler(async (req, res) => {
     if (priceMin && priceMax) {
         query.rentPrice = { $gte: parseFloat(priceMin), $lte: parseFloat(priceMax) };
     }
+
+    query.carStatus = "Available";
 
     // Validate and handle carMakeId
     if (carMakeId) {
@@ -391,7 +393,8 @@ module.exports.searchCarController = asyncHandler(async (req, res) => {
     // Fetch the results
     const result = await CarRent.find(query)
         .skip((page - 1) * limit)
-        .limit(parseInt(limit));
+        .limit(parseInt(limit))
+        .populate("CarImage");
 
     // Count total results
     const total = await CarRent.countDocuments(query);

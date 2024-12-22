@@ -3,11 +3,11 @@ const { createReviewController,
     getAllCarReviewController,
     updateReviewController,
     deleteReviewController,
-    getOneReviewByUserController
+    getAllUserReviewController
 } = require("../controller/ReviewController");
 const validationObjectId = require("../middlewares/validateObjectID");
 const { verfiyTokenAndAuthorization,
-    verfiyToken
+    verfiyToken , verfiyTokenAndOnlyUser
 } = require("../middlewares/verifyToken");
 
 
@@ -18,10 +18,10 @@ router.route("/:id")
     .put(validationObjectId, verfiyToken, updateReviewController)
     .delete(validationObjectId, verfiyTokenAndAuthorization, deleteReviewController);
 
-// /api/review/user-review/:id
 
+// /api/review/user-review/:id
 router.route("/user-review/:id")
-    .get(validationObjectId,verfiyToken, getOneReviewByUserController)
+    .get(validationObjectId, verfiyTokenAndOnlyUser, getAllUserReviewController)
 
 
 module.exports = router;

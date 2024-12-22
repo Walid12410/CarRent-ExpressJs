@@ -60,12 +60,12 @@ module.exports.getAllCarReviewController = asyncHandler(async (req, res) => {
 
 /**
  * @desc Get one review for user by carId
- * @Route /api/review/:id
+ * @Route /api/user-review/:id
  * @method GET
  * @access private(only user)
  */
-module.exports.getOneReviewByUserController = asyncHandler(async (req, res) => {
-    const review = await Review.findOne({ carId: req.params.id }).populate("user");
+module.exports.getAllUserReviewController = asyncHandler(async (req, res) => {
+    const review = await Review.find({ userId: req.user.id });
     res.status(200).json(review);
 });
 
