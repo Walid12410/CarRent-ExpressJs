@@ -77,7 +77,6 @@ function validationCreatePromo(obj) {
         startDate: Joi.date().iso().required(),
         endDate: Joi.date().iso().greater(Joi.ref('startDate')).required(),
         usageLimit: Joi.number().integer().min(1),
-        companyId: Joi.required(),
         usedCount: Joi.number().integer().min(0),
         promoTitle : Joi.string().trim().min(2).max(100).required(),
         promoDescription : Joi.string().trim().min(2).required()
