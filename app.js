@@ -3,13 +3,7 @@ const connectToDB = require("./config/connectToDB");
 const { notFound, errorHandler } = require("./middlewares/error");
 const cors = require("cors");
 require("dotenv").config();
-const admin = require('firebase-admin');
 
-
-// admin.initializeApp({
-//     credential: admin.credential.applicationDefault(),
-//   });
-  
 
 // Connection to database
 connectToDB();
@@ -47,6 +41,7 @@ app.use("/api/employee", require("./routes/employeeRoute"));
 app.use("/api/feature", require("./routes/featureRoute"));
 app.use("/api/booking", require("./routes/bookingRoute"));
 app.use("/api/device-token", require("./routes/deviceTokenRoute"));
+app.use("/api/notification", require("./routes/notificationRoute"));
 app.use("/api/fakeData",require("./fakeData"));
 
 
