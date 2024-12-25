@@ -95,9 +95,9 @@ module.exports.NotificationForOneUserController = asyncHandler(async (req, res) 
         body: req.body.body,
         userId: req.params.id
     });
-        
+
     await notification.save();
-    
+
     // Fetch the user's device token
     const device = await DeviceToken.findOne({ userId: req.params.id });
     if (!device) {
@@ -114,7 +114,7 @@ module.exports.NotificationForOneUserController = asyncHandler(async (req, res) 
         },
         token: deviceToken
     };
-    
+
     // Send the notification
     admin.messaging().send(message)
         .then((response) => {
@@ -125,4 +125,37 @@ module.exports.NotificationForOneUserController = asyncHandler(async (req, res) 
             console.log("Error sending notification!", error);
             return res.status(400).json({ message: "Error sending notification!" });
         });
+});
+
+
+/**
+ * @desc Get all user notification
+ * @Route /api/notification/user-notification
+ * @method GET
+ * @access private (only user)
+*/
+module.exports.getUserNotificationController = asyncHandler(async (req, res) => {
+    const { pageNumber, limitPerPage } = req.query;
+    const page = parseInt(pageNumber) || 1;
+    const limit = parseInt(limitPerPage) || 10;
+    const userId = req.user.id;
+    const notifications = await Notification.find({ userId: userId })
+        .skip((page - 1) * limit).limit(limit).sort({ createdAt: -1 });
+    res.status(200).json( notifications );
+});
+
+
+/**
+ * @desc Get all user notification
+ * @Route /api/notification/user-notification
+ * @method DELETE
+ * @access private (only user)
+*/
+module.exports.deleteUserNotificationsController = asyncHandler(async (req, res) => {
+    const userId = req.user.id;
+    const notifications = await Notification.deleteMany({ userId: userId });
+    if (!notifications) {
+        return res.status(400).json({ message: "No notification found!" });
+    }
+    res.status(200).json({ message: 'All notifications deleted successfully!' });
 });
