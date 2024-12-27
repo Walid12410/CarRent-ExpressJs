@@ -4,6 +4,7 @@ const { Review,
     validationUpdateReview
 } = require("../model/Review");
 const { CarRent } = require("../model/CarRent");
+const { mongoose } = require("mongoose");
 
 
 /**
@@ -49,12 +50,38 @@ module.exports.createReviewController = asyncHandler(async (req, res) => {
  * @access public
  */
 module.exports.getAllCarReviewController = asyncHandler(async (req, res) => {
-    const carReviews = await Review.find({ carId: req.params.id });
-    if (carReviews.length > 0) {
-        res.status(200).json(carReviews);
-    } else {
-        res.status(404).json({ message: "No reviews for this car yet" });
-    }
+    const { pageNumber, limitPerPage } = req.query;
+
+    // Validate and parse page number and limit
+    const page = parseInt(pageNumber, 10) || 1;
+    const limit = parseInt(limitPerPage, 10) || 10;
+
+
+    const pipelineAggregation = [
+        { $match: { carId : new mongoose.Types.ObjectId(req.params.id) } }, // Match the reviews for the specified car
+        {
+            $lookup: {
+                from: "users",
+                localField: "userId", // Assuming 'userId' is the field in the 'reviews' collection
+                foreignField: "_id",
+                as: "user",
+                pipeline: [
+                    { $project: { password: 0 } } // Exclude password field
+                ]
+            }
+        },
+        {
+            $unwind: {
+                path: "$user",
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        { $skip: (page - 1) * limit }, // Pagination: Skip documents for the previous pages
+        { $limit: limit } // Pagination: Limit to the specified number per page
+    ];
+
+    const carReviews = await Review.aggregate(pipelineAggregation);
+    return res.status(200).json(carReviews);
 });
 
 

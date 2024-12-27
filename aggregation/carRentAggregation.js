@@ -98,18 +98,19 @@ const companyCarAggregation = [
     }
 ];
 
-const getOneCarRentAggregation = (carId) => [
-    {
-        $match: {
-            _id: new ObjectId(carId),
-        }
-    },
+const getOneCarRentAggregation =  [
     {
         $lookup: {
             from: "reviews",
             localField: "_id",
             foreignField: "carId",
             as: "reviews"
+        }
+    },
+    {
+        $addFields: {
+            reviewCount: { $size: { $ifNull: ['$reviews', []] } }, // Count only the top 2 reviews
+            averageRating: { $avg: { $ifNull: ['$reviews.rate', []] } }
         }
     },
     {
@@ -222,12 +223,6 @@ const getOneCarRentAggregation = (carId) => [
             localField: "companyDetails._id",
             foreignField: "companyID",
             as: "companyDetails.imageCompany"
-        }
-    },
-    {
-        $addFields: {
-            reviewCount: { $size: { $ifNull: ['$reviews', []] } },
-            averageRating: { $avg: { $ifNull: ['$reviews.rate', []] } }
         }
     },
     {

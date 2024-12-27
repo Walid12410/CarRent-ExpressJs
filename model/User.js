@@ -69,7 +69,6 @@ function validationRegisterUser(obj) {
         email: Joi.string().min(5).max(100).trim().required(),
         phoneNumber: Joi.string().min(6).max(20).trim().required(),
         password: Joi.string().min(8).max(100).trim().required(),
-        locationName : Joi.string().min(1).max(100).trim().required()
     });
     return schema.validate(obj);
 }

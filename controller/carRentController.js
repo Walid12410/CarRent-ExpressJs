@@ -229,7 +229,9 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
  * @access public
 */
 module.exports.getOneCarRentController = asyncHandler(async (req, res) => {
-    const car = await CarRent.aggregate([...getOneCarRentAggregation(req.params.id)]);
+    const car = await CarRent.aggregate([
+        {$match : {_id : new mongoose.Types.ObjectId(req.params.id)} },
+        ...getOneCarRentAggregation]);
     if (car.length > 0) {
         res.status(200).json(car[0]); // Return the car object
     } else {
@@ -352,7 +354,7 @@ module.exports.countAllCarRentController = asyncHandler(async (req, res) => {
  * @access public
 */
 module.exports.searchCarController = asyncHandler(async (req, res) => {
-    const { carMakeId, categoryId, carModel, priceMin, priceMax, page = 1, limit = 10 } = req.body;
+    const { carMakeId, categoryId, companyId, carModel, priceMin, priceMax, page = 1, limit = 10 } = req.body;
 
     const query = {};
 
@@ -369,6 +371,14 @@ module.exports.searchCarController = asyncHandler(async (req, res) => {
             return res.status(400).json({ message: "Invalid car make" });
         }
         query.carMakeId = carMakeId;
+    }
+
+    // validate and handle companyId
+    if(companyId) {
+        if(!validateObjectId(companyId)){
+            return res.status(400).json({message : "Invalid company"});
+        }
+        query.companyId = companyId;
     }
 
     // Handle multiple categoryIds from the body
@@ -401,7 +411,7 @@ module.exports.searchCarController = asyncHandler(async (req, res) => {
 
     res.status(200).json({
         success: true,
-        date: result,
+        data: result,
         total,
         currentPage: parseInt(page),
         totalPage: Math.ceil(total / limit)
