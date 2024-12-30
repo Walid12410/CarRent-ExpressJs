@@ -182,13 +182,14 @@ module.exports.updatePromoCodeController = asyncHandler(async (req, res) => {
  * @desc Delete one Promo
  * @Route /api/promo/:id
  * @method DELETE
- * @access private (only admin)
+ * @access private (only employee)
 */
 module.exports.deleteOnePromoController = asyncHandler(async (req, res) => {
     const promoCheck = await Promo.findById(req.params.id);
     if (!promoCheck) {
         res.status(404).json({ message: "Promo not found" });
     } else {
+        await cloudinaryRemoveImage(promoCheck.promoImage.cloudinary_id);
         await Promo.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: "Promo has been succefully deleted" });
     }
@@ -199,7 +200,7 @@ module.exports.deleteOnePromoController = asyncHandler(async (req, res) => {
  * @desc upload promo image 
  * @Route /api/promo/upload-image/:id
  * @method POST
- * @access private (only admin)
+ * @access private (only employee)
 */
 module.exports.uploadPromoImage = asyncHandler(async (req, res) => {
     if (!req.file) {

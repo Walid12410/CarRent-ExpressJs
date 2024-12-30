@@ -4,6 +4,8 @@ const { validationCreateBooking,
     validationUpdateBooking
 } = require("../model/Booking");
 const { CarRent } = require("../model/CarRent");
+const { GetPromo } = require("../model/GetPromo");
+const { Promo } = require("../model/Prome");
 
 
 
@@ -35,6 +37,32 @@ module.exports.createBookingController = asyncHandler(async (req, res) => {
                 startDate: req.body.startDate,
                 endDate: req.body.endDate
             });
+
+            if(req.body.promoCode) {
+                const promo = await Promo.findOne({ promoCode : req.body.promoCode });
+                if (!promo) {
+                    return res.status(404).send({ message: 'Promotion not found' });
+                }
+            
+                const getPromo = await GetPromo.findOne({ userId: req.user.id, promoId: promo._id });
+                if (!getPromo) {
+                    return res.status(400).json({ message: "You have not claimed this promotion" });
+                }
+            
+                if (getPromo.isUsed) {
+                    return res.status(400).json({ message: "Promotion has already been userd" });
+                }
+            
+                if (req.params.currentTime < getPromo.startDate || req.params.currentTime > getPromo.endDate) {
+                    return res.status(400).json({ message: "Promotion is expired" });
+                }
+            
+                getPromo.isUsed = true;
+                await getPromo.save();
+            
+                promo.usedCount += 1;
+                await promo.save();
+            }
 
             await createBook.save();
             carFound.carStatus = "Rented";

@@ -48,7 +48,7 @@ module.exports.getPromoCodeController = asyncHandler(async (req, res) => {
  * @access private (only user)
 */
 module.exports.getUserPromoController = asyncHandler(async (req, res) => {
-    const userPromo = await GetPromo.find({userId : req.user.id});
+    const userPromo = await GetPromo.find({userId : req.user.id}).populate("promoDetails");
     res.status(200).json(userPromo);
 });
 

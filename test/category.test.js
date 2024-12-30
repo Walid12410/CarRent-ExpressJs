@@ -5,6 +5,15 @@ describe('Category API', () => {
     let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWFjNGU0NTY0Mjg2ZDU0Y2RlZTIyMSIsImlzQWRtaW4iOnRydWUsImlhdCI6MTcyOTgwNzY4Mn0.ueU4sCdrZSSODMSQS80TbzYtTayVsi8IUNgoHLRt2I4';
     let categoryId;
 
+    it('should error 400 for category create validation', async () => {
+        const res = await request(app)
+            .post('/api/category')
+            .set('Authorization', `Bearer ${token}`)
+            .send({ categoryName: null });
+
+        expect(res.statusCode).toBe(400);
+    });
+
     it('should create a new category', async () => {
         const res = await request(app)
             .post('/api/category')
@@ -13,6 +22,16 @@ describe('Category API', () => {
 
         expect(res.statusCode).toBe(201);
         expect(res.body).toHaveProperty('message', 'New Category Added Successfully');
+    });
+
+    it('should error 400 because category already creating', async () => {
+        const res = await request(app)
+            .post('/api/category')
+            .set('Authorization', `Bearer ${token}`)
+            .send({ categoryName: 'New Category' });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body).toHaveProperty('message', 'Category Already Created Before');
     });
 
     it('should get all categories and extract the ID of New Category', async () => {
@@ -34,6 +53,15 @@ describe('Category API', () => {
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toHaveProperty('categoryName', 'Updated Category');
+    });
+
+    it('should update the existing category', async () => {
+        const res = await request(app)
+            .put(`/api/category/${categoryId}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ categoryName: null });
+
+        expect(res.statusCode).toBe(400);
     });
 
     it('should delete the category', async () => {
