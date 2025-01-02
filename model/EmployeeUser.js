@@ -32,7 +32,7 @@ const EmployeeUserSchema = new mongoose.Schema({
 
 // Generate Auth Token
 EmployeeUserSchema.methods.generateEmployeeAuthToken = function () {
-    return jwt.sign({ id: this._id, companyId : this.companyID }, process.env.JWT_SECRET_EMPLOYEE, { expiresIn: '1h' });
+    return jwt.sign({ id: this._id, companyId : this.companyID }, process.env.JWT_SECRET_EMPLOYEE, { expiresIn: '24h' });
 }
 
 EmployeeUserSchema.virtual("companyDetails", {

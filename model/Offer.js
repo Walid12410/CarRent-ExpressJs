@@ -53,6 +53,7 @@ function validationCreateOffer(obj) {
 // Validation Update Offer
 function validationUpdateOffer(obj) {
     const schema = Joi.object({
+        carId : Joi.optional(),
         startDate: Joi.date().iso(),
         endDate: Joi.date().iso().greater(Joi.ref('startDate')),
         offerTitle: Joi.string().trim().min(2).max(50),

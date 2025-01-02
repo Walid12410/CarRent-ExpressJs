@@ -65,3 +65,35 @@ module.exports.RemovImageCompanyController = asyncHandler(async (req, res) => {
 
     res.status(200).json({ message: "Image deleted successfully" });
 });
+
+
+/**
+ * @desc change company image
+ * @Route /api/company/change-image/:id
+ * @method POST
+ * @access private (employee only)
+*/
+module.exports.changeCompanyImageController = asyncHandler(async (req,res)=> {
+    if(!req.file) return res.status(400).json({message: "No file provided"});
+
+    const imagePath = path.join(__dirname, `../images/${req.file.filename}`);
+    const result = await cloudinaryUploadImage(imagePath);
+    const companyImage = await CompanyImage.findById(req.params.id);
+
+    if(companyImage.image && companyImage.image.cloudinary_id){
+        await cloudinaryRemoveImage(companyImage.image.cloudinary_id);
+    }
+
+    companyImage.image = {
+        url: result.secure_url,
+        cloudinary_id: result.public_id
+    };
+    await companyImage.save();
+
+    res.status(200).json({
+        message : "Company image uploaded successfully",
+        companyImage: {url: result.secure_url, cloudinary_id: result.public_id}
+    });
+
+    fs.unlinkSync(imagePath);
+});

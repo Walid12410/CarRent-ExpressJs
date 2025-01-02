@@ -108,7 +108,7 @@ function validationCreateCarRent(obj) {
         mileage: Joi.string().trim().min(2).max(100).required(),
         fuelType: Joi.string().trim().min(2).max(100).required(),
         transmission: Joi.string().trim().min(2).max(500).required(),
-        rentPrice: Joi.number().min(1).max(20).required(),
+        rentPrice: Joi.number().min(1).max(500).required(),
         categoryId: Joi.required(),
     });
     return schema.validate(obj);

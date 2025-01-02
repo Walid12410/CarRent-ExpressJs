@@ -88,7 +88,7 @@ module.exports.getOneCompanyController = asyncHandler(async (req, res) => {
  * @desc Update Company Details
  * @Route /api/company/list/:id
  * @method PUT
- * @access private (Admin Only)
+ * @access private (employee Only)
 */
 module.exports.updateCompanyController = asyncHandler(async (req, res) => {
     const { error } = validationComapainesUpdate(req.body);

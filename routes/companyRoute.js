@@ -8,8 +8,9 @@ const { getAllCompaniesController,
     deleteCompanyController,
     CountAllCompaniesController
 } = require("../controller/CompanyController");
-const { AddCompanyImageController, RemovImageCompanyController } = require("../controller/CompanyImageController");
+const { AddCompanyImageController, RemovImageCompanyController, changeCompanyImageController } = require("../controller/CompanyImageController");
 const photoUpload = require("../middlewares/uploadProfilePhoto");
+const verifyEmployeeToken = require("../middlewares/verifyEmloyeeToken");
 
 // api/company/list
 router.route("/list")
@@ -19,8 +20,12 @@ router.route("/list")
 // api/company/list/:id
 router.route("/list/:id")
     .get(validationObjectId, getOneCompanyController)
-    .put(validationObjectId, verifyTokenAndAdmin, updateCompanyController)
+    .put(validationObjectId, verifyEmployeeToken, updateCompanyController)
     .delete(validationObjectId, verifyTokenAndAdmin, deleteCompanyController)
+
+// api/company/change-image/:id
+router.route("/change-image/:id")
+    .post(verifyEmployeeToken, validationObjectId, photoUpload.single("image"), changeCompanyImageController);
 
 // api/company/upload-company-image
 router.route("/upload-company-image/:id")
