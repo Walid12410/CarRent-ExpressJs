@@ -6,6 +6,7 @@ const { validationCreateBooking,
 const { CarRent } = require("../model/CarRent");
 const { GetPromo } = require("../model/GetPromo");
 const { Promo } = require("../model/Prome");
+const bookingCompanyAggregation = require("../aggregation/bookingAggregation");
 
 
 
@@ -35,7 +36,8 @@ module.exports.createBookingController = asyncHandler(async (req, res) => {
                 mainCarPrice: req.body.mainCarPrice,
                 discountPercent: req.body.discountPercent,
                 startDate: req.body.startDate,
-                endDate: req.body.endDate
+                endDate: req.body.endDate,
+                isDelivered: false
             });
 
             if(req.body.promoCode) {
@@ -96,7 +98,8 @@ module.exports.updateBookingController = asyncHandler(async (req, res) => {
             mainCarPrice: req.body.mainCarPrice,
             discountPercent: req.body.discountPercent,
             startDate: req.body.startDate,
-            endDate: req.body.endDate
+            endDate: req.body.endDate,
+            isDelivered: req.body.isDelivered
         }
     }, { new: true });
 
@@ -138,6 +141,22 @@ module.exports.getBookingUserController = asyncHandler(async (req, res) => {
 
     res.status(200).json(bookings);
 });
+
+
+/**
+ * @desc Get company booking
+ * @Route /api/booking/company
+ * @method GET
+ * @access private (only employee)
+*/
+module.exports.getBookingCompanyController = asyncHandler(async(req,res)=>{
+    const companyId = req.params.id;
+    const bookingCompany = await Booking.aggregate([
+        ...bookingCompanyAggregation(companyId)
+    ]);
+    res.status(200).json(bookingCompany);
+});
+
 
 
 /**

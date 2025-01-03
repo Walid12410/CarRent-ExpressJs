@@ -39,6 +39,9 @@ const BookingSchema = new mongoose.Schema({
     endDate: {
         type: Date, required: true
     },
+    isDelivered: {
+        type : Boolean , default : false
+    }
 },{
     timestamps: true,
     toJSON: { virtuals: true },

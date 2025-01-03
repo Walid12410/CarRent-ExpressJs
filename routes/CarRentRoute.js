@@ -6,7 +6,8 @@ const { createCarRentController,
     deleteCarRentController,
     countAllCarRentController,
     AddCarImagesController,
-    searchCarController
+    searchCarController,
+    changeCarImageController
 } = require("../controller/CarRentController");
 const verifyEmployeeToken = require("../middlewares/verifyEmloyeeToken");
 const validationObjectId = require("../middlewares/validateObjectID");
@@ -30,7 +31,10 @@ router.route("/:id")
     .put(validationObjectId, verifyEmployeeToken, updateOneCarRentController)
     .delete(validationObjectId, verifyEmployeeToken, deleteCarRentController);
 
+// api/car-rent/car-image/:id
+router.post('/car-image/:id', validationObjectId, verifyEmployeeToken, photoUpload.array('carImages', 3), AddCarImagesController);
 
-router.post('/car-image/:id', validationObjectId, verifyEmployeeToken, photoUpload.array('carImages', 5), AddCarImagesController);
+// api/car-rent/change-image/:id
+router.post('/change-image/:id', validationObjectId, verifyEmployeeToken, photoUpload.single('carImages', 3), changeCarImageController);
 
 module.exports = router;

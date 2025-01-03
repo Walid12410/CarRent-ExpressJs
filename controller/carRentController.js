@@ -17,6 +17,7 @@ const { carRentAggregation,
     companyCarAggregation
 } = require("../aggregation/carRentAggregation");
 const { validateObjectId } = require("../middlewares/helperFunction");
+const { url } = require("inspector");
 
 
 /**
@@ -69,7 +70,7 @@ module.exports.createCarRentController = asyncHandler(async (req, res) => {
 
 
 /**
- * @desc Get All Car
+ * @desc Add car image
  * @Route /api/car-rent/car-image/:id
  * @method POST
  * @access private (only Employee)
@@ -79,12 +80,12 @@ module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
     const { id: carRentID } = req.params;
 
     if (!files || !carRentID) {
-        return res.status(400).json({ message: 'Files or CarRent ID missing' });
+        return res.status(400).json({ message: 'Files or carRent id missing' });
     }
 
     const carRent = await CarRent.findById(carRentID);
     if (!carRent) {
-        return res.status(400).json({ message: 'CarRent ID not found' });
+        return res.status(400).json({ message: 'Car rent id not found' });
     }
 
     const uploadedImages = [];
@@ -115,7 +116,35 @@ module.exports.AddCarImagesController = asyncHandler(async (req, res) => {
         res.status(200).json({ message: 'Car images uploaded successfully', carImages: uploadedImages });
     } catch (err) {
         res.status(500).json({ message: err.message });
+    } 
+});
+
+
+/**
+ * @desc Change car image
+ * @Route /api/car-rent/change-image/:id
+ * @method POST
+ * @access private (only Employee)
+*/
+module.exports.changeCarImageController = asyncHandler(async (req,res)=> {
+    if(!req.file) return res.status(400).json({message : "No file provided"});
+
+    const imagePath = path.join(__dirname, `../images/${req.file.filename}`);
+    const result = await cloudinaryUploadImage(imagePath);
+    const carImage = await CarImage.findById(req.params.id);
+
+    if(carImage.carImage && carImage.carImage.cloudinary_id){
+        await cloudinaryRemoveImage(carImage.carImage.cloudinary_id);
     }
+
+    carImage.carImage = {url : result.secure_url, cloudinary_id : result.public_id};
+    await carImage.save(); // Save the new image
+
+    res.status(200).json({message : "Image updated successfully", carImage : {
+        url : result.secure_url, cloudinary_id : result.public_id
+    }});
+
+    fs.unlinkSync(imagePath);
 });
 
 

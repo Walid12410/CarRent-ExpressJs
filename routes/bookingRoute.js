@@ -3,7 +3,8 @@ const { createBookingController,
     updateBookingController,
     deleteBookingController,
     getBookingUserController,
-    getAllBookingController
+    getAllBookingController,
+    getBookingCompanyController
 } = require("../controller/BookingController");
 const verifyEmployeeToken = require("../middlewares/verifyEmloyeeToken");
 const validationObjectId = require("../middlewares/validateObjectID");
@@ -22,7 +23,8 @@ router.route("/:id")
     .get(validationObjectId, verfiyTokenAndAuthorization, getBookingUserController);
 
 
-// Employee route
+// api/booking/company
+router.route("/company/:id").get(verifyEmployeeToken, getBookingCompanyController);
 
 // api/booking
 router.route("/").get(verifyEmployeeToken, getAllBookingController);
