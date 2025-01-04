@@ -6,7 +6,9 @@ const { validationCreateBooking,
 const { CarRent } = require("../model/CarRent");
 const { GetPromo } = require("../model/GetPromo");
 const { Promo } = require("../model/Prome");
-const bookingCompanyAggregation = require("../aggregation/bookingAggregation");
+const {bookingCompanyAggregation,
+    countBookingsForCompanyAggregation
+} = require("../aggregation/bookingAggregation");
 
 
 
@@ -40,28 +42,28 @@ module.exports.createBookingController = asyncHandler(async (req, res) => {
                 isDelivered: false
             });
 
-            if(req.body.promoCode) {
-                const promo = await Promo.findOne({ promoCode : req.body.promoCode });
+            if (req.body.promoCode) {
+                const promo = await Promo.findOne({ promoCode: req.body.promoCode });
                 if (!promo) {
                     return res.status(404).send({ message: 'Promotion not found' });
                 }
-            
+
                 const getPromo = await GetPromo.findOne({ userId: req.user.id, promoId: promo._id });
                 if (!getPromo) {
                     return res.status(400).json({ message: "You have not claimed this promotion" });
                 }
-            
+
                 if (getPromo.isUsed) {
                     return res.status(400).json({ message: "Promotion has already been userd" });
                 }
-            
+
                 if (req.params.currentTime < getPromo.startDate || req.params.currentTime > getPromo.endDate) {
                     return res.status(400).json({ message: "Promotion is expired" });
                 }
-            
+
                 getPromo.isUsed = true;
                 await getPromo.save();
-            
+
                 promo.usedCount += 1;
                 await promo.save();
             }
@@ -145,18 +147,46 @@ module.exports.getBookingUserController = asyncHandler(async (req, res) => {
 
 /**
  * @desc Get company booking
- * @Route /api/booking/company
+ * @Route /api/booking/company/:id
  * @method GET
  * @access private (only employee)
 */
-module.exports.getBookingCompanyController = asyncHandler(async(req,res)=>{
+module.exports.getBookingCompanyController = asyncHandler(async (req, res) => {
+    const { pageNumber , limitPage  } = req.query;
     const companyId = req.params.id;
-    const bookingCompany = await Booking.aggregate([
-        ...bookingCompanyAggregation(companyId)
-    ]);
+    let bookingCompany;
+    if (pageNumber && limitPage) {
+        const page = parseInt(pageNumber, 10);
+        const limit = parseInt(limitPage, 10);
+
+        bookingCompany = await Booking.aggregate([
+            { $skip: (page - 1) * limit },
+            { $limit: limit },
+            ...bookingCompanyAggregation(companyId),
+        ]);
+    } else {
+        bookingCompany = await Booking.aggregate([
+            ...bookingCompanyAggregation(companyId)
+        ]);
+    }
+
     res.status(200).json(bookingCompany);
 });
 
+
+/**
+ * @desc Get company booking
+ * @Route /api/booking/company-count/:id
+ * @method GET
+ * @access private (only employee)
+*/
+module.exports.countCompanyBookingController = asyncHandler(async(req,res)=>{
+    const companyId = req.params.id;
+    const countCompanyBooking = await Booking.aggregate([
+        ...countBookingsForCompanyAggregation(companyId)
+    ]);
+    res.status(200).json(countCompanyBooking);
+});
 
 
 /**

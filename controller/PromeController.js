@@ -185,6 +185,7 @@ module.exports.updatePromoCodeController = asyncHandler(async (req, res) => {
  * @access private (only employee)
 */
 module.exports.deleteOnePromoController = asyncHandler(async (req, res) => {
+    // @TODO remove all getPromo by promoID
     const promoCheck = await Promo.findById(req.params.id);
     if (!promoCheck) {
         res.status(404).json({ message: "Promo not found" });

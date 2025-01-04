@@ -31,7 +31,12 @@ const bookingCompanyAggregation = (companyId) => [
     },
     {
         $sort: {
-            isDelivered: 1,
+            createdAt: -1,
+        },
+    },
+    {
+        $project: {
+            "user.password": 0, // Exclude user password field
         },
     },
     {
@@ -49,4 +54,40 @@ const bookingCompanyAggregation = (companyId) => [
     },
 ];
 
-module.exports = bookingCompanyAggregation;
+
+const countBookingsForCompanyAggregation = (companyId) => [
+    {
+        $lookup: {
+            from: "carrents",
+            localField: "carId",
+            foreignField: "_id",
+            as: "car",
+        },
+    },
+    {
+        $unwind: {
+            path: "$car",
+            preserveNullAndEmptyArrays: false, // Only include bookings with a car
+        },
+    },
+    {
+        $match: {
+            "car.companyId": new ObjectId(companyId),
+        },
+    },
+    {
+        $group: {
+            _id: "$car.companyId",
+            bookingCount: { $sum: 1 }, // Count the number of bookings
+        },
+    },
+    {
+        $project: {
+            _id: 0, // Exclude the `_id` field from the output
+            companyId: "$_id",
+            bookingCount: 1,
+        },
+    },
+];
+
+module.exports = { bookingCompanyAggregation, countBookingsForCompanyAggregation };

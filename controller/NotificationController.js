@@ -6,7 +6,7 @@ const { validationCreateNotification, Notification } = require("../model/Notific
 
 /**
  * @desc send notification for all users
- * @Route /api/notification/send-notification-to-users
+ * @Route /api/notification/send-notfication-to-usiers
  * @method POST
  * @access private (only Admin or employee)
 */

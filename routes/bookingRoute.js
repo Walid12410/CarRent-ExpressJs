@@ -4,7 +4,8 @@ const { createBookingController,
     deleteBookingController,
     getBookingUserController,
     getAllBookingController,
-    getBookingCompanyController
+    getBookingCompanyController,
+    countCompanyBookingController
 } = require("../controller/BookingController");
 const verifyEmployeeToken = require("../middlewares/verifyEmloyeeToken");
 const validationObjectId = require("../middlewares/validateObjectID");
@@ -25,6 +26,9 @@ router.route("/:id")
 
 // api/booking/company
 router.route("/company/:id").get(verifyEmployeeToken, getBookingCompanyController);
+
+// api/booking/company-count
+router.route("/company-count/:id").get(verifyEmployeeToken, countCompanyBookingController);
 
 // api/booking
 router.route("/").get(verifyEmployeeToken, getAllBookingController);
