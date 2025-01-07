@@ -19,10 +19,7 @@ const { verfiyTokenAndOnlyUser,
 // api/booking/:id
 router.route("/:id")
     .post(validationObjectId, verfiyToken, createBookingController)
-    .put(validationObjectId, verfiyToken, updateBookingController)
-    .delete(validationObjectId, verfiyTokenAndAuthorization, deleteBookingController)
     .get(validationObjectId, verfiyTokenAndAuthorization, getBookingUserController);
-
 
 // api/booking/company
 router.route("/company/:id").get(verifyEmployeeToken, getBookingCompanyController);

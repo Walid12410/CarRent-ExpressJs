@@ -86,6 +86,7 @@ function validationUpdateBooking(obj) {
         totalRentPrice: Joi.string(),
         startDate: Joi.date().iso(),
         endDate: Joi.date().iso().greater(Joi.ref('startDate')),
+        isDelivered : Joi.optional()
     });
     return schema.validate(obj);
 }

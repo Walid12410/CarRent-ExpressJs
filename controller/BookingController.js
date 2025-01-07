@@ -9,7 +9,7 @@ const { Promo } = require("../model/Prome");
 const {bookingCompanyAggregation,
     countBookingsForCompanyAggregation
 } = require("../aggregation/bookingAggregation");
-
+const moment = require("moment")
 
 
 /**
@@ -171,6 +171,52 @@ module.exports.getBookingCompanyController = asyncHandler(async (req, res) => {
     }
 
     res.status(200).json(bookingCompany);
+});
+/**
+ * @desc Get company booking
+ * @Route /api/booking/company/ended/:id
+ * @method GET
+ * @access private (only employee)
+*/
+module.exports.getCompanyEndedBookingController = asyncHandler(async(req,res)=> {
+    const { pageNumber , limitPage, currentTime} = req.query;
+    const companyId = req.params.id;
+    let endedBookingCar;
+
+    if(!currentTime) return res.status(400).json({message : "Current time is required" });
+
+        const dateFormat = "YYYY-MM-DDTHH:mm:ss";
+        const userCurrentTime = moment(currentTime, dateFormat, true).utc();
+
+    if (!userCurrentTime.isValid()) {
+        return res.status(400).json({ message: "Invalid date format" });
+    }
+
+    if(pageNumber && limitPage){
+        const page = parseInt(pageNumber, 10) || 1;
+        const limit = parseInt(limitPage, 10) || 10;
+        endedBookingCar = await Booking.aggregate([
+            { $skip: (page - 1) * limit },
+            { $limit: limit },
+            ...bookingCompanyAggregation(companyId),
+            {
+                $match: {
+                    endTime: { $lte: userCurrentTime.toDate() } // Ensure endTime is less than or equal to currentTime
+                },
+            },
+        ]);
+    } else {
+        endedBookingCar = await Booking.aggregate([
+            ...bookingCompanyAggregation(companyId),
+            {
+                $match: {
+                    endTime: { $lte: userCurrentTime.toDate() } // Ensure endTime is less than or equal to currentTime
+                },
+            },
+        ]);
+    }
+
+    res.status(200).json(endedBookingCar);
 });
 
 

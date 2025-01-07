@@ -36,6 +36,12 @@ ReviewSchema.virtual("user",{
     foreignField : "_id"
 });
 
+ReviewSchema.virtual("car",{
+    ref : "CarRent",
+    localField : "carId",
+    foreignField : "_id"
+});
+
 const Review = mongoose.model("Review", ReviewSchema);
 
 

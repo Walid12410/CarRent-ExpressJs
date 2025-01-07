@@ -175,14 +175,12 @@ module.exports.getAllCarRentController = asyncHandler(async (req, res) => {
     if (isAdmin) {
         if (pageNumber) {
             cars = await CarRent.aggregate([
-                { $match: { carStatus: "Available" } },
                 ...carRentAdminAggregation,
                 { $skip: (pageNumber - 1) * carsPerPage },
                 { $limit: carsPerPage }
             ]);
         } else {
             cars = await CarRent.aggregate([
-                { $match: { carStatus: "Available" } },
                 ...carRentAdminAggregation
             ]);
         }

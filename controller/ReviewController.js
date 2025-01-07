@@ -5,6 +5,7 @@ const { Review,
 } = require("../model/Review");
 const { CarRent } = require("../model/CarRent");
 const { mongoose } = require("mongoose");
+const { reviewCompanyAggregation, countReviewForCompanyAggregation } = require("../aggregation/reviewAggregation");
 
 
 /**
@@ -58,7 +59,7 @@ module.exports.getAllCarReviewController = asyncHandler(async (req, res) => {
 
 
     const pipelineAggregation = [
-        { $match: { carId : new mongoose.Types.ObjectId(req.params.id) } }, // Match the reviews for the specified car
+        { $match: { carId: new mongoose.Types.ObjectId(req.params.id) } }, // Match the reviews for the specified car
         {
             $lookup: {
                 from: "users",
@@ -96,6 +97,131 @@ module.exports.getAllUserReviewController = asyncHandler(async (req, res) => {
     res.status(200).json(review);
 });
 
+
+/**
+ * @desc Get review car for one company
+ * @Route /api/company-review/:id
+ * @method GET
+ * @access private(only employee)
+ */
+module.exports.getCompanyReviewController = asyncHandler(async (req, res) => {
+    const companyId = req.params.id;
+    const { pageNumber, limitPage } = req.query;
+    let reviewsCompany;
+
+    if (pageNumber && limitPage) {
+        const page = parseInt(pageNumber, 10);
+        const limit = parseInt(limitPage, 10);
+
+        reviewsCompany = await Review.aggregate([
+            { $skip: (page - 1) * limit },
+            { $limit: limit },
+            ...reviewCompanyAggregation(companyId),
+        ]);
+    } else {
+        reviewsCompany = await Review.aggregate([
+            ...reviewCompanyAggregation(companyId),
+        ]);
+    }
+
+    res.status(200).json(reviewsCompany);
+});
+
+
+/**
+ * @desc Get all car review
+ * @Route /api/car-review
+ * @method GET
+ * @access private(only admin)
+ */
+module.exports.getAllReviewController = asyncHandler(async (req, res) => {
+    const { pageNumber = 1, limitPage = 10 } = req.query; // Default values: page 1, 10 reviews per page
+
+    const page = parseInt(pageNumber, 10);
+    const limit = parseInt(limitPage, 10);
+
+    if (page < 1 || limit < 1) {
+        return res.status(400).json({ message: "Invalid pagination parameters" });
+    }
+
+    // Calculate the number of documents to skip
+    const skip = (page - 1) * limit;
+
+    // Fetch reviews with pagination
+    const reviews = await Review.aggregate([
+        // Populate the "car" field using a $lookup
+        {
+            $lookup: {
+                from: "carrents", // The name of the collection you're referencing
+                localField: "carId", // The field in the Review collection
+                foreignField: "_id", // The field in the Cars collection
+                as: "car", // Output array field
+            },
+        },
+        // Unwind the carDetails array (if needed)
+        {
+            $unwind: {
+                path: "$car",
+                preserveNullAndEmptyArrays: true, // Keeps reviews without a linked car
+            },
+        },
+        {
+            $lookup: {
+                from: "carimages",
+                localField: "car._id",
+                foreignField: "carRentID",
+                as: "CarImage",
+            },
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "_id",
+                as: "user",
+            },
+        },
+        {
+            $unwind: {
+                path: "$user",
+                preserveNullAndEmptyArrays: true,
+            },
+        },
+
+        // Pagination: Skip and limit
+        { $skip: skip },
+        { $limit: limit },
+    ]);
+    // Send paginated results with metadata
+    res.status(200).json(reviews);
+});
+
+
+/**
+ * @desc Get all car review
+ * @Route /api/car-review/count
+ * @method GET
+ * @access private(only admin)
+ */
+module.exports.countReviewController = asyncHandler(async (req, res) => {
+    const reviewCount = await Review.countDocuments();
+    res.status(200).json({ reviewCount });
+});
+
+
+/**
+ * @desc Get review count for company
+ * @Route /api/company-review/count/:id
+ * @method GET
+ * @access private(only employee)
+ */
+module.exports.countCompanyReviewController = asyncHandler(async (req, res) => {
+    const companyId = req.params.id;
+    const companyReviewCount = await Review.aggregate([
+        ...countReviewForCompanyAggregation(companyId)
+    ]);
+    res.status(200).json(companyReviewCount);
+});
 
 
 /**
