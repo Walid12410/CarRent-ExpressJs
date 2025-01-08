@@ -208,7 +208,7 @@ module.exports.countOfferController = asyncHandler(async(req,res)=> {
 
         return res.status(200).json(countDocuments[0]);
     }else{
-
+        countDocuments = await Offer.countDocuments();
+        return res.status(200).json(countDocuments);
     }
-
 })
