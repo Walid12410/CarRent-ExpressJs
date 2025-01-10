@@ -46,7 +46,9 @@ module.exports.createOfferController = asyncHandler(async (req, res) => {
  * @access public 
 */
 module.exports.getActiveOffersController = asyncHandler(async (req, res) => {
-    const { currentTime, page, limit, companyId, companyPageNumber, companyPageLimit } = req.query;
+    const { currentTime, page, limit, companyId,
+        companyPageNumber, companyPageLimit
+    } = req.query;
     let offers;
 
     // Handle active offers based on currentTime
@@ -61,8 +63,7 @@ module.exports.getActiveOffersController = asyncHandler(async (req, res) => {
         ];
 
         offers = await Offer.aggregate(aggregationPipeline);
-    }
-    else if (companyId) {
+    } else if (companyId) {
         if (!validateObjectId(companyId)) {
             return res.status(400).json({ message: "Invalid company ID" });
         }
@@ -105,7 +106,7 @@ module.exports.checkCarIsOfferController = asyncHandler( async(req, res) => {
         ];
 
         offer = await Offer.aggregate(aggregationPipeline);
-    }else{
+    } else {
         return res.status(400).json({message : "time is required"})
     }
 
@@ -211,4 +212,4 @@ module.exports.countOfferController = asyncHandler(async(req,res)=> {
         countDocuments = await Offer.countDocuments();
         return res.status(200).json(countDocuments);
     }
-})
+});

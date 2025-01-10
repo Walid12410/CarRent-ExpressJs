@@ -76,7 +76,6 @@ const getActiveOffersAggregation = (userCurrentTime) => [
     }
 ];
 
-
 const getCompanyOffers = (companyId) => [
     {
         $sort: {
@@ -146,7 +145,6 @@ const getCompanyOffers = (companyId) => [
     },
 ];
 
-
 const countCompanyOffer = (companyId) => [
     {
         $lookup: {
@@ -184,33 +182,6 @@ const countCompanyOffer = (companyId) => [
     }
 ];
 
-
-
-
-const countAllCompanyOffer = [
-    {
-        $lookup: {
-          from: "companies", // The collection where companies are stored
-          localField: "car.companyId",
-          foreignField: "_id",
-          as: "companyDetails",
-        },
-      },
-      {
-        $unwind: "$companyDetails", // Flatten the companyDetails array
-      },
-      {
-        $group: {
-          _id: "$car.companyId", // Group by companyId
-          companyName: { $first: "$companyDetails.name" }, // Replace "name" with the field for the company name
-          offerCount: { $sum: 1 }, // Count offers for each company
-        },
-      },
-      {
-        $sort: { offerCount: -1 }, // Sort by offer count in descending order
-      },
-
-];
 
 
 module.exports =
